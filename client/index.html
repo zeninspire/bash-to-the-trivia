@@ -1,1 +1,24 @@
-<!-- HOME PAGE VIEW -->
+<!DOCTYPE html>
+<html ng-app='app'>
+<head>
+
+</head>
+<body>
+<a ui-sref="signupState">Signup</a>
+<a ui-sref="signinState">Signin</a>
+<a ui-sref="homeState">Signedin</a>
+
+
+<ui-view></ui-view>
+
+<script src="./bower_components/angular/angular.min.js"></script>
+<script src="./bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
+
+
+<script src="./app/auth/auth-controller.js"></script>
+<script src="./app/services/services.js"></script>
+<script src="./app/user/user-controller.js"></script>
+<script src="./app/app.js"></script>
+</body>
+
+</html>
