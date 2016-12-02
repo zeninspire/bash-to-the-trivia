@@ -19,7 +19,7 @@ app.get('/usersdb', function(req, res) {
     	console.log('ID', user._id)
       userObj[user._id] = user;
     });
-    res.send(userObj);  
+    res.send(userObj);
   });
 });
 
@@ -70,6 +70,7 @@ app.post('/login', function(req, res) {
 
 	})
 })
+
 
 app.listen(8080, function() {
   console.log('Listening to port 8080');
