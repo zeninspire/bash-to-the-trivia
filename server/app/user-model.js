@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
-var bcrypt = require('bcrypt-promised');
-var Promise = require('bluebird');
+var bcrypt = require('bcrypt-nodejs');
+// var Promise = require('bluebird');
 
 
 var userSchema = mongoose.Schema({
@@ -9,18 +9,44 @@ var userSchema = mongoose.Schema({
   channels: { type: Array },
   avatarUrl: { type: String },
   age: { type: Number, min: 12, max: 65 },
-  created: Date,
-  updated: { type: Date, default: Date.now }
+  created_at: Date
 })
 
+// var channelSchema = mongoose.Schema({
+//   name: {type: String, required: true, index: {unique: true}}
+// })
 
 var User = mongoose.model('User', userSchema);
 
 userSchema.pre('save', function(next) {
-	return bcrypt.hash(this.password, null).then(function(hash) {
-		this.password = hash;
-	})
-	next();
-})
+  var user = this;
+  return new Promise (function(resolve, reject) {
+    bcrypt.hash(user.password, null, null, function(err, hash) {
+      if(err) {
+        reject(err);
+      } else {
+        resolve(hash);
+      }
+    })
+  })
+  .then(function(hash) {
+    user.password = hash;
+    next();
+  })
+})    
+
 
 module.exports = User;
+
+
+
+
+
+// .then(function(user) {
+//   console.log(user)
+// }) 
+
+
+
+
+// On user initiliasition
