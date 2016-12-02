@@ -1,7 +1,7 @@
 <!-- sidebar -->
-<div>
-<div className="col-md-offset-10">Username</div>
-<div className="col-md-offset-10">Channel</div>
+<div class="col-md-2" display="inline">
+<div>Username</div>
+<div>Channel</div>
 <ul>
   <li>game room1</li> <!-- ng-repeat -->
   <li>game room2</li>
@@ -10,8 +10,9 @@
 </ul>
 
 </div>
+
 <a ui-sref=".profile">Profile</a>
 <a ui-sref=".room">Room</a>
 <a ui-sref=".game">Game</a>
-<div ui-view></div>
+<div ui-view class="col-md-11 col-md-offset-2" display="inline"></div>
 
