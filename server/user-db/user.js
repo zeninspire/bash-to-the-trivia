@@ -18,8 +18,19 @@ var userSchema = mongoose.Schema({
 var User = mongoose.model('User', userSchema);
 
 userSchema.pre('save', function(next) {
-  return bcrypt.hash(this.password, null).then(function(hash) {
-    this.password = hash;
-  })
-  next();
+	return bcrypt.hash(this.password, null).then(function(hash) {
+		this.password = hash;
+	})
+	next();
 })
+
+// User.prototype.checkPass = function(input, expected) {
+// 	return bcrypt.compare(input, expected);
+// }
+
+// User.prototype.addChanel = function()
+
+
+
+
+exports.module = User;
