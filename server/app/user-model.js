@@ -9,12 +9,13 @@ var userSchema = mongoose.Schema({
   channels: { type: Array },
   avatarUrl: { type: String },
   age: { type: Number, min: 12, max: 65 },
-  created_at: Date
+  created_at: Date,
+  updated_at: Date
 })
 
-// var channelSchema = mongoose.Schema({
-//   name: {type: String, required: true, index: {unique: true}}
-// })
+var channelSchema = mongoose.Schema({
+  name: {type: String, required: true, index: {unique: true}}
+})
 
 var User = mongoose.model('User', userSchema);
 
@@ -35,6 +36,18 @@ userSchema.pre('save', function(next) {
   })
 })    
 
+User.prototype.authenticate = function(plain, hash) {
+  return new Promise(function(resolve, reject) {
+    bcrypt.compare(plain, hash, function(err, res) {
+      if(err) {
+        reject(err);
+      } else {
+        resolve(res);
+      }
+    })
+  })
+}
+
 
 module.exports = User;
 
@@ -42,11 +55,4 @@ module.exports = User;
 
 
 
-// .then(function(user) {
-//   console.log(user)
-// }) 
 
-
-
-
-// On user initiliasition
