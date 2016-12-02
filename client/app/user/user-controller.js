@@ -1,5 +1,5 @@
 angular.module('app.user', [])
 
-.controller('HomeController', function() {
+.controller('UserController', function() {
 
 });
