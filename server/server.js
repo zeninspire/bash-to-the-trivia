@@ -15,12 +15,10 @@ app.get('/usersdb', function(req, res) {
   User.find({}, function(err, users) {
   	console.log(users)
     var userObj = {};
-
     users.forEach(function(user) {
     	console.log('ID', user._id)
       userObj[user._id] = user;
     });
-
     res.send(userObj);  
   });
 });
@@ -34,7 +32,7 @@ app.post('/signup', function(req, res) {
 	var username = req.body.username;
 	var password = req.body.password;
 
-	User.findOne({username: username}).exec(function(user) {
+	User.findOne({username: username}).exec(function(err, user) {
 		if(user) {
 			res.status(304).redirect('/login');
 		} else {
@@ -44,7 +42,7 @@ app.post('/signup', function(req, res) {
 			})
 			newUser.save(function(err, user) {
 				if(err) {
-					res.status(500).end(err);
+					res.status(500).end('ERRRORRR');
 				} else {
 					res.end(user);
 				}
@@ -53,18 +51,24 @@ app.post('/signup', function(req, res) {
 	})
 })
 
+app.post('/login', function(req, res) {
+	var username = req.body.username;
+	var password = req.body.password;
 
-var newUser = User({
-	username: 'xyz',
-	password: '12345'
-})
+	User.findOne({username: username}).exec(function(err, user) {
+		if(!user) {
+			res.redirect('/login');
+		}
 
-newUser.save(function(err) {
-	if(err) {
-		throw err;
-	} else {
-		console.log('SAVE');
-	}
+		User.authenticate(password, user.password).then(function(match) {
+			if(match) {
+				res.redirect('/signup');
+			} else {
+				res.redirect('/profile');
+			}
+		})
+
+	})
 })
 
 app.listen(8080, function() {
@@ -73,6 +77,4 @@ app.listen(8080, function() {
 
 
 
-var newUser = User({username: 'param', password:'pam'});
 
-// module.exports = User;
