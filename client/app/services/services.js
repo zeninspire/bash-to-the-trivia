@@ -44,7 +44,7 @@ angular.module('app.services', [])
     },
 
     getRoom: function(room) {
-      UserInfo.currentRoom = UserInfo.rooms[room.roomname];
+      this.currentRoom = this.rooms[room.roomname];
       console.log('currentRoom', this.currentRoom);
       // return $http({
       //   method: 'GET',
