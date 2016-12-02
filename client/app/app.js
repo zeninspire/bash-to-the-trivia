@@ -17,22 +17,22 @@ angular.module('app', ['app.auth', 'app.user', 'ui.router'])
     url: '/home',
     abstract: true, //TODO
     templateUrl: 'app/user/home.html',
-    controller: 'UserController'
+    controller: 'HomeController'
   })
   .state('homeState.profile', {
     url: '/profile',
     templateUrl: 'app/user/home.profile.html', //#1 view
-    controller: 'UserController'
+    controller: 'GameController'
   })
   .state('homeState.room', {
     url: '/room',
     templateUrl: 'app/user/home.room.html',
-    controller: 'UserController'
+    controller: 'GameController'
   })
   .state('homeState.game', {
     url: '/game',
     templateUrl: 'app/user/home.game.html',
-    controller: 'UserController'
+    controller: 'GameController'
   })
   .state('otherwise', {
     url: '*path',
