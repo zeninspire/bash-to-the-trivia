@@ -3,7 +3,7 @@ var bodyParser = require('body-parser');
 var path = require('path');
 var mongoose = require('mongoose');
 var db = require('./db-config.js');
-var User = require('./user-db/user.js')
+var User = require('./app/user-model.js')
 
 
 var app = express();
