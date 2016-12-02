@@ -1,11 +1,9 @@
 <!-- sidebar -->
 <div class="col-md-2" display="inline">
 <div>Username</div>
-<div>Channel</div>
+<div>Rooms</div>
 <ul>
-  <li>game room1</li> <!-- ng-repeat -->
-  <li>game room2</li>
-  <li>game room3</li>
+  <li ng-repeat="RoomName in rooms" ng-click="goToRoom(RoomName)">{{RoomName.roomname}}</li>
   <li>add new game room</li>
 </ul>
 
@@ -14,5 +12,5 @@
 <a ui-sref=".profile">Profile</a>
 <a ui-sref=".room">Room</a>
 <a ui-sref=".game">Game</a>
-<div ui-view class="col-md-11 col-md-offset-2" display="inline"></div>
+<div ui-view class="col-md-10" display="inline"></div>
 
