@@ -31,10 +31,11 @@ app.get('/signup', function(req, res) {
 app.post('/signup', function(req, res) {
 	var username = req.body.username;
 	var password = req.body.password;
-
+  console.log("username: ", username);
 	User.findOne({username: username}).exec(function(err, user) {
+    console.log("user: ", user);
 		if(user) {
-			res.status(304).redirect('/login');
+			res.redirect('/login');
 		} else {
 			var newUser = User({
 				username: username,
