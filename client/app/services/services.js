@@ -58,4 +58,50 @@ angular.module('app.services', [])
   };
 
 
+})
+
+.factory('Authentication', function($http) {
+
+
+
+  var signUp = function(user) {
+
+    return $http({
+      method: 'POST',
+      url: '/signup',
+      data: user
+    }).then(function(resp) {
+      console.log(resp);
+    });
+
+  };
+
+  var signIn = function(user) {
+
+    return $http({
+      method: 'POST',
+      url: '/login',
+      data: user
+    }).then(function(resp) {
+      console.log(resp);
+    });
+  };
+
+  return {
+    signIn: signIn,
+    signUp: signUp
+  };
+
+
 });
+
+
+
+
+
+
+
+
+
+
+
