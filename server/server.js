@@ -26,6 +26,8 @@ app.get('/api/usersdb', function(req, res) {
   });
 });
 
+// app.get('/api/profile/:user', function(req, res) {
+// })
 
 app.post('/api/signup', function(req, res) {
 	var username = req.body.username;
@@ -45,6 +47,7 @@ app.post('/api/signup', function(req, res) {
 					res.status(500).json(new Error('ERRRORRR'));
 				} else {
 					console.log('USER', user)
+					// next()
 					res.json(user);
 				}
 			})
@@ -52,28 +55,33 @@ app.post('/api/signup', function(req, res) {
 	})
 })
 
-app.post('/api/login', function(req, res) {
+app.post('/api/signin', function(req, res) {
 	var username = req.body.username;
 	var password = req.body.password;
-
 	User.findOne({username: username}).exec(function(err, user) {
 		if(err) {
-			next(err);
+			console.log("ERROR LOGIN", err)
+			// next(err);
+			return res.send('false');
 		}
 		if(!user) {
-			next(new Error('User does not exist'));
+			// next(new Error('User does not exist'));
+			console.log('NEWUSER')
+			res.send('newUser')
+		} else {
+			user.auth(password, user.password).then(function(match) {
+				if(match) {
+					console.log('MATCH=TRUE')
+					res.json(user);	
+				} else {
+					console.log('MATCH=TRUE')
+					res.send('false');
+				}
+			})
 		}
-		User.authenticate(password, user.password).then(function(match) {
-			if(match) {
-				console.log('Passwords Match...continue to profile page')
-				res.json('match')
-			} else {
-				res.json('no match');
-			}
-		})
-
 	})
 })
+
 
 
 app.listen(8080, function() {

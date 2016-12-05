@@ -36,7 +36,7 @@ userSchema.pre('save', function(next) {
   })
 })    
 
-User.prototype.authenticate = function(plain, hash) {
+User.prototype.auth = function (plain, hash) {
   return new Promise(function(resolve, reject) {
     bcrypt.compare(plain, hash, function(err, res) {
       if(err) {
