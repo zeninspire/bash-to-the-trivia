@@ -4,7 +4,7 @@ angular.module('app.services', [])
 
 
 
-.factory('UserInfo', function($http) {
+.factory('UserInfo', function($http, $rootScope) {
 
   return {
     user: 'Tonny',
@@ -46,8 +46,9 @@ angular.module('app.services', [])
     getRoom: function(room) {
       this.currentRoom = this.rooms[room.roomname];
       console.log(this.currentRoom);
+      $rootScope.$emit('getRoom');
 
-      //send server request for users usernames and avatars
+      //send server request for users avatars
 
 
       // return $http({

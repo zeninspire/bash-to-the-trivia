@@ -4,13 +4,13 @@
 <div class="players">Players
   <li class="gamePlayer">
   <!-- <div ng-repeat="url in players.avatars"><img ng-src="{{url}}" ng-model="url"></div> -->
-  <!-- <div ng-repeat="name in players.names">{{name}}</div> -->
+  <div ng-repeat="name in users.usernames">{{name}}</div>
   </li>
 
-  <li class="gamePlayer"><img id="minnie" ng-src="https://cdn-img.easyicon.net/png/11652/1165292.gif"></br>Minne</li>
+  <!-- <li class="gamePlayer"><img id="minnie" ng-src="https://cdn-img.easyicon.net/png/11652/1165292.gif"></br>Minne</li>
   <li class="gamePlayer"><img id="mickey" ng-src="http://icons.iconarchive.com/icons/iconka/tailwaggers/128/dog-rich-icon.png"></br>Mickey</li>
 
-  <li class="newUser"><img ng-src="http://www.axialis.com/objects/ip_icon_05_sample5d.png"></br>Add a new user!</li>
+  <li class="newUser"><img ng-src="http://www.axialis.com/objects/ip_icon_05_sample5d.png"></br>Add a new user!</li> -->
 </div>
 
 <button class="startGame" ui-sref="homeState.game">Start Game</button> <!-- ng-click="startGame()" -->
