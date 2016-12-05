@@ -1,13 +1,17 @@
 angular.module('app.user', ['app.services'])
 
-.controller('HomeController', function($scope, UserInfo, $rootScope) {
+.controller('HomeController', function($scope, UserInfo) {
   //Passing data from the UserInfo factory
   $scope.user = UserInfo.user;
   $scope.rooms = UserInfo.rooms;
   $scope.avatar = UserInfo.avatar;
+  $scope.users = {};
+
 
   $scope.goToRoom = function(roomName) {
     UserInfo.getRoom(roomName);
+    $scope.room = UserInfo.currentRoom;
+    $scope.users.usernames = UserInfo.currentRoom.usernames;
 
   };
 
@@ -24,10 +28,6 @@ angular.module('app.user', ['app.services'])
 
 
 .controller('GameController', function($scope, UserInfo, $rootScope) {
-  //Passing data from the UserInfo factory
-  $scope.user = UserInfo.user;
-  $scope.rooms = UserInfo.rooms;
-  $scope.avatar = UserInfo.avatar;
 
   //Local scope variable
   $scope.activeUsers = [];
@@ -38,19 +38,12 @@ angular.module('app.user', ['app.services'])
 })
 
 .controller('RoomController', function($scope, UserInfo, $rootScope) {
-  //Passing data from the UserInfo factory
-  $scope.user = UserInfo.user;
-  $scope.avatar = UserInfo.avatar;
-  $scope.users = {};
-
-
-
   //Updates informations about the room when getting to a specific room
-  $rootScope.$on('getRoom', function() {
-    $scope.room = UserInfo.currentRoom;
-    $scope.users.usernames = UserInfo.currentRoom.usernames;
+  // $rootScope.$on('getRoom', function() {
+  //   $scope.room = UserInfo.currentRoom;
+    // $scope.users.usernames = UserInfo.currentRoom.usernames;
 
-  });
+  // });
 
 
 })
