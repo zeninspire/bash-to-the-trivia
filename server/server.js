@@ -65,7 +65,6 @@ app.post('/api/signup', function(req, res) {
 				} else {
 
 					console.log('USER', user)
-					// next() broadcasting with socket
 					res.json(user);
 				}
 			})
