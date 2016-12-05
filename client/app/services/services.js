@@ -60,10 +60,6 @@ angular.module('app.services', [])
         url: 'api/signin',
         data: user
       }).then(function(resp) {
-<<<<<<< HEAD
-
-=======
->>>>>>> login functionality
         if(resp.data === "newUser") {
             console.log("NEWUSER", resp.data)
            $location.path('/signup');
@@ -78,7 +74,6 @@ angular.module('app.services', [])
       }).catch(function(err) {
         console.log("RESP CATCH", err)
       })
-<<<<<<< HEAD
     },
     on: function(eventName, callback) {
       socket.on(eventName, function() {
@@ -97,10 +92,7 @@ angular.module('app.services', [])
           }
         });
       });
-    },
-=======
     }
->>>>>>> login functionality
 
   };
 

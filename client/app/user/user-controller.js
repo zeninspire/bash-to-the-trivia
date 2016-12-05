@@ -25,11 +25,12 @@ angular.module('app.user', ['app.services'])
 
 
 .controller('ProfileController', function($scope, UserInfo, $rootScope) {
-  
+
   //Local scope variable
   $scope.activeUsers = [];
   $scope.questions = [];
   $scope.answers = [];
+
 
   $scope.startGame = function() {
     UserInfo.getQuestions().then(function() {
