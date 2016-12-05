@@ -30,7 +30,6 @@ angular.module('app.services', [])
     getRoom: function(room) {
       return this.currentRoom = this.rooms[room.roomname];
     },
-
     signUp: function(user) {
       var context = this;
       return $http({
@@ -41,7 +40,7 @@ angular.module('app.services', [])
         if(resp.data === "user exists") {
           return resp.data;
         } else {
-          context.user = resp.data.username;
+          context.user = resp.data;
           $location.path('/home/profile');
         }
       }).catch(function(err) {
@@ -52,7 +51,6 @@ angular.module('app.services', [])
     userProfile: function(user) {
       var context =  this;
     },
-
     signIn: function(user) {
       var context = this;
       return $http({
