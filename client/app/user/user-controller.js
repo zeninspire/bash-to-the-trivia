@@ -22,6 +22,15 @@ angular.module('app.user', ['app.services'])
       return $scope.newRoom.setPristine();
     });*/
   };
+})
+
+
+.controller('ProfileController', function($scope, UserInfo, $rootScope) {
+  
+  //Local scope variable
+  $scope.activeUsers = [];
+  $scope.questions = [];
+  $scope.answers = [];
 
 
 })
