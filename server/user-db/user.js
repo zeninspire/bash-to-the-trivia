@@ -31,6 +31,4 @@ userSchema.pre('save', function(next) {
 
 // User.prototype.addChanel = function()
 
-
-
 exports.module = User;
