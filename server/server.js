@@ -17,12 +17,12 @@ app.use(morgan('dev'));
 app.get('/api/usersdb', function(req, res) {
   User.find({}, function(err, users) {
   	console.log(users)
-    var userObj = {};
+    var allUsers = {};
     users.forEach(function(user) {
     	console.log('ID', user._id)
-      userObj[user._id] = user;
+      allUsers[user._id] = user;
     });
-    res.send(userObj);
+    res.json(allUsers);
   });
 });
 
