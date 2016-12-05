@@ -38,9 +38,9 @@ angular.module('app.services', [])
         //   console.log(resp);
         // });
 
-
-      $scope.currentRoom = newRoomName;
-      $scope.channels.push(newRoomName);
+        //move this code into the promise from the $http
+      this.rooms[newRoomName] = {roomname: newRoomName, admin: this.user};
+      this.currentRoom = this.rooms[newRoomName];
     },
 
     getRoom: function(room) {

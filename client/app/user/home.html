@@ -1,16 +1,17 @@
 <!-- sidebar -->
-<div class="col-md-2" display="inline">
-<div>Username</div>
+<div class="col-md-2 sidebar" display="inline">
+<div ui-sref=".profile">{{user}}</div>
 <div>Rooms</div>
 <ul>
-  <li ng-repeat="RoomName in rooms" ng-click="goToRoom(RoomName)">{{RoomName.roomname}}</li>
-  <li>add new game room</li>
+  <li ui-sref=".room" ng-repeat="RoomName in rooms" ng-click="goToRoom(RoomName)">{{RoomName.roomname}}</li>
+  <form name="newRoom" ng-submit="addRoom(newRoomName)">
+    <input type="text" ng-model="newRoomName">
+    <button>Add Room</button>
+  </form>
 </ul>
 
 </div>
 
-<a ui-sref=".profile">Profile</a>
-<a ui-sref=".room">Room</a>
-<a ui-sref=".game">Game</a>
+
 <div ui-view class="col-md-10" display="inline"></div>
 

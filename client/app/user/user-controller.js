@@ -10,6 +10,14 @@ angular.module('app.user', ['app.services'])
     UserInfo.getRoom(roomName);
   };
 
+  $scope.addRoom = function(newRoomName) {
+    // $scope.rooms[newRoomName] = {roomname: newRoomName, admin: $scope.user};
+
+    UserInfo.addNewRoom(newRoomName);/*.then(function() {
+      return $scope.newRoom.setPristine();
+    });*/
+  };
+
 
 })
 
@@ -29,6 +37,11 @@ angular.module('app.user', ['app.services'])
 
 .controller('RoomController', function($scope, UserInfo) {
   $scope.users = ['Allen', 'Josh', 'Benji', 'Zak'];
+  //Passing data from the UserInfo factory
+  $scope.user = UserInfo.user;
+  $scope.room = UserInfo.currentRoom;
+  $scope.avatar = UserInfo.avatar;
+
 
 })
 
