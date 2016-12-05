@@ -45,7 +45,11 @@ angular.module('app.services', [])
 
     getRoom: function(room) {
       this.currentRoom = this.rooms[room.roomname];
-      console.log('currentRoom', this.currentRoom);
+      console.log(this.currentRoom);
+
+      //send server request for users usernames and avatars
+
+
       // return $http({
       //   method: 'GET',
       //   url: 'FILL_ME_IN',

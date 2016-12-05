@@ -1,6 +1,6 @@
 angular.module('app.user', ['app.services'])
 
-.controller('HomeController', function($scope, UserInfo) {
+.controller('HomeController', function($scope, UserInfo, $rootScope) {
   //Passing data from the UserInfo factory
   $scope.user = UserInfo.user;
   $scope.rooms = UserInfo.rooms;
@@ -8,6 +8,7 @@ angular.module('app.user', ['app.services'])
 
   $scope.goToRoom = function(roomName) {
     UserInfo.getRoom(roomName);
+    $rootScope.$emit('getRoom');
   };
 
   $scope.addRoom = function(newRoomName) {
@@ -35,12 +36,17 @@ angular.module('app.user', ['app.services'])
 
 })
 
-.controller('RoomController', function($scope, UserInfo) {
+.controller('RoomController', function($scope, UserInfo, $rootScope) {
   $scope.users = ['Allen', 'Josh', 'Benji', 'Zak'];
   //Passing data from the UserInfo factory
   $scope.user = UserInfo.user;
   $scope.room = UserInfo.currentRoom;
   $scope.avatar = UserInfo.avatar;
+
+  $rootScope.$on('getRoom', function() {
+    console.log('getRoom event listened');
+    $scope.room = UserInfo.currentRoom;
+  });
 
 
 })
