@@ -4,7 +4,7 @@ angular.module('app.services', [])
 
 
 
-.factory('UserInfo', function($http) {
+.factory('UserInfo', function($http, $rootScope) {
 
   return {
     user: 'Tonny',
@@ -38,14 +38,19 @@ angular.module('app.services', [])
         //   console.log(resp);
         // });
 
-
-      $scope.currentRoom = newRoomName;
-      $scope.channels.push(newRoomName);
+        //move this code into the promise from the $http
+      this.rooms[newRoomName] = {roomname: newRoomName, admin: this.user};
+      this.currentRoom = this.rooms[newRoomName];
     },
 
     getRoom: function(room) {
       this.currentRoom = this.rooms[room.roomname];
-      console.log('currentRoom', this.currentRoom);
+      console.log(this.currentRoom);
+      $rootScope.$emit('getRoom');
+
+      //send server request for users avatars
+
+
       // return $http({
       //   method: 'GET',
       //   url: 'FILL_ME_IN',

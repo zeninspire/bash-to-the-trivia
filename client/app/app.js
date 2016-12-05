@@ -27,7 +27,7 @@ angular.module('app', ['app.auth', 'app.user', 'ui.router'])
   .state('homeState.room', {
     url: '/room',
     templateUrl: 'app/user/home.room.html',
-    controller: 'GameController'
+    controller: 'RoomController'
   })
   .state('homeState.game', {
     url: '/game',

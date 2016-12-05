@@ -1,6 +1,6 @@
 angular.module('app.user', ['app.services'])
 
-.controller('HomeController', function($scope, UserInfo) {
+.controller('HomeController', function($scope, UserInfo, $rootScope) {
   //Passing data from the UserInfo factory
   $scope.user = UserInfo.user;
   $scope.rooms = UserInfo.rooms;
@@ -8,13 +8,22 @@ angular.module('app.user', ['app.services'])
 
   $scope.goToRoom = function(roomName) {
     UserInfo.getRoom(roomName);
+
+  };
+
+  $scope.addRoom = function(newRoomName) {
+    // $scope.rooms[newRoomName] = {roomname: newRoomName, admin: $scope.user};
+
+    UserInfo.addNewRoom(newRoomName);/*.then(function() {
+      return $scope.newRoom.setPristine();
+    });*/
   };
 
 
 })
 
 
-.controller('GameController', function($scope, UserInfo) {
+.controller('GameController', function($scope, UserInfo, $rootScope) {
   //Passing data from the UserInfo factory
   $scope.user = UserInfo.user;
   $scope.rooms = UserInfo.rooms;
@@ -25,10 +34,24 @@ angular.module('app.user', ['app.services'])
   $scope.questions = [];
   $scope.answers = [];
 
+
 })
 
-.controller('RoomController', function($scope, UserInfo) {
-  $scope.users = ['Allen', 'Josh', 'Benji', 'Zak'];
+.controller('RoomController', function($scope, UserInfo, $rootScope) {
+  //Passing data from the UserInfo factory
+  $scope.user = UserInfo.user;
+  $scope.avatar = UserInfo.avatar;
+  $scope.users = {};
+
+
+
+  //Updates informations about the room when getting to a specific room
+  $rootScope.$on('getRoom', function() {
+    $scope.room = UserInfo.currentRoom;
+    $scope.users.usernames = UserInfo.currentRoom.usernames;
+
+  });
+
 
 })
 
