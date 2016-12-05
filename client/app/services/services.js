@@ -27,11 +27,10 @@ angular.module('app.services', [])
     },
     avatar: 'http://www.how-to-draw-funny-cartoons.com/images/draw-a-goose-001.jpg',
     currentRoom: {},
-
     getRoom: function(room) {
       return this.currentRoom = this.rooms[room.roomname];
     },
-    
+
     signUp: function(user) {
       var context = this;
       return $http({
@@ -46,8 +45,8 @@ angular.module('app.services', [])
           $location.path('/home/profile');
         }
       }).catch(function(err) {
-        console.log("RESP CATCH", err)
-      })
+        console.log("RESP CATCH", err);
+      });
     },
 
     userProfile: function(user) {
