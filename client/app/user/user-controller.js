@@ -31,6 +31,12 @@ angular.module('app.user', ['app.services'])
   $scope.questions = [];
   $scope.answers = [];
 
+  $scope.startGame = function() {
+    UserInfo.getQuestions().then(function() {
+
+    });
+  };
+
 
   $scope.startGame = function() {
     UserInfo.getQuestions().then(function() {
