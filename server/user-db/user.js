@@ -15,6 +15,7 @@ var userSchema = mongoose.Schema({
 });
 
 
+
 var User = mongoose.model('User', userSchema);
 
 userSchema.pre('save', function(next) {
