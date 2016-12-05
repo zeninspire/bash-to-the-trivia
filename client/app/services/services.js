@@ -74,13 +74,26 @@ angular.module('app.services', [])
       })
     },
     signIn: function(user) {
+      var context = this;
       return $http({
         method: 'POST',
         url: 'api/signin',
         data: user
       }).then(function(resp) {
-        console.log(resp);
-      });
+        if(resp.data === "newUser") {
+            console.log("NEWUSER", resp.data)
+           $location.path('/signup');
+        } else if(resp.data === "false") {
+          console.log("FALSE", resp.data)
+          return resp.data;
+        } else {
+          console.log("TRUE", resp.data)
+          context.user = resp.data.username;
+          $location.path('/home/profile');  // concat username to path
+        }
+      }).catch(function(err) {
+        console.log("RESP CATCH", err)
+      })
     }
 
   };
