@@ -4,10 +4,10 @@ angular.module('app.services', [])
 
 
 
-.factory('UserInfo', function($http, $rootScope) {
+.factory('UserInfo', function($http, $rootScope, $location) {
 
   return {
-    user: 'Tonny',
+    user: 'OVERWRITTEN',
     rooms: {
       'room1': {
         roomname: 'room1',
@@ -29,7 +29,6 @@ angular.module('app.services', [])
     currentRoom: {},
 
     addNewRoom: function(newRoomName) {
-
         // return $http({
         //   method: 'POST',
         //   url: 'FILL_ME_IN',
@@ -49,8 +48,6 @@ angular.module('app.services', [])
       $rootScope.$emit('getRoom');
 
       //send server request for users avatars
-
-
       // return $http({
       //   method: 'GET',
       //   url: 'FILL_ME_IN',
@@ -58,48 +55,37 @@ angular.module('app.services', [])
       // }).then(function(resp) {
       //   console.log(resp);
       // });
+    },
+    signUp: function(user) {
+      var context = this;
+      return $http({
+        method: 'POST',
+        url: 'api/signup',
+        data: user
+      }).then(function(resp) {
+        if(resp.data === "user exists") {
+          return resp.data;
+        } else {
+          context.user = resp.data.username;
+          $location.path('/home/profile');
+        }
+      }).catch(function(err) {
+        console.log("RESP CATCH", err)
+      })
+    },
+    signIn: function(user) {
+      return $http({
+        method: 'POST',
+        url: 'api/signin',
+        data: user
+      }).then(function(resp) {
+        console.log(resp);
+      });
     }
 
   };
 
-
-})
-
-.factory('Authentication', function($http) {
-
-
-
-  var signUp = function(user) {
-
-    return $http({
-      method: 'POST',
-      url: '/signup',
-      data: user
-    }).then(function(resp) {
-      console.log(resp);
-    });
-
-  };
-
-  var signIn = function(user) {
-
-    return $http({
-      method: 'POST',
-      url: '/login',
-      data: user
-    }).then(function(resp) {
-      console.log(resp);
-    });
-  };
-
-  return {
-    signIn: signIn,
-    signUp: signUp
-  };
-
-
 });
-
 
 
 
