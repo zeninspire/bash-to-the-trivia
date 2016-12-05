@@ -30,6 +30,8 @@ angular.module('app.services', [])
     getRoom: function(room) {
       return this.currentRoom = this.rooms[room.roomname];
     },
+
+    
     signUp: function(user) {
       var context = this;
       return $http({
@@ -53,6 +55,11 @@ angular.module('app.services', [])
     userProfile: function(user) {
       var context =  this;
     },
+
+    userProfile: function(user) {
+      var context =  this;
+    }
+
     signIn: function(user) {
       var context = this;
       return $http({

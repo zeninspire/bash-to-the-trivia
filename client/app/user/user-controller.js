@@ -26,7 +26,6 @@ angular.module('app.user', ['app.services'])
 
 .controller('ProfileController', function($scope, UserInfo, $rootScope) {
 
-  //Local scope variable
   $scope.activeUsers = [];
   $scope.questions = [];
   $scope.answers = [];
@@ -51,8 +50,6 @@ angular.module('app.user', ['app.services'])
   UserInfo.on('newUserSignedUp', function(data) {
     console.log(data.username, ' got connected');
   });
-
-
 })
 
 
