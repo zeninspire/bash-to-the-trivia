@@ -41,9 +41,9 @@ angular.module('app.services', [])
       }).then(function(resp) {
         if(!resp.data) {
           $location.path('/signin');
-          // socket.emit('signUp', {username: resp.data.username});
         } else {
           context.user = resp.data.username;
+          socket.emit('signUp', {username: resp.data.username});
           $location.path('/home/profile');
         } 
       }).catch(function(err) {
@@ -52,13 +52,6 @@ angular.module('app.services', [])
       })
     },
 
-    userProfile: function(user) {
-      var context =  this;
-    },
-
-    userProfile: function(user) {
-      var context =  this;
-    }
 
     signIn: function(user) {
       var context = this;
@@ -98,7 +91,7 @@ angular.module('app.services', [])
           }
         });
       });
-    }
+    },
 
 
     addNewRoom: function (newRoomName) {
