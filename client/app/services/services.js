@@ -93,11 +93,7 @@ angular.module('app.services', [])
           }
         });
       });
-<<<<<<< HEAD
     }
-=======
-    },
->>>>>>> broadcasting with socket
 
   };
 
