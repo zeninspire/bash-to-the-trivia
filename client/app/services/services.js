@@ -30,6 +30,8 @@ angular.module('app.services', [])
     getRoom: function(room) {
       return this.currentRoom = this.rooms[room.roomname];
     },
+
+    
     signUp: function(user) {
       var context = this;
       return $http({
@@ -37,22 +39,20 @@ angular.module('app.services', [])
         url: 'api/signup',
         data: user
       }).then(function(resp) {
-        if (resp.data === 'user exists') {
-          return resp.data;
+        if(!resp.data) {
+          $location.path('/signin');
         } else {
-          console.log('getting into the expected if loop');
           context.user = resp.data.username;
           socket.emit('signUp', {username: resp.data.username});
           $location.path('/home/profile');
-        }
+        } 
       }).catch(function(err) {
-        console.log('RESP CATCH', err);
-      });
+
+        console.log("signup error: ", err)
+      })
     },
 
-    userProfile: function(user) {
-      var context =  this;
-    },
+
     signIn: function(user) {
       var context = this;
       return $http({
@@ -60,22 +60,20 @@ angular.module('app.services', [])
         url: 'api/signin',
         data: user
       }).then(function(resp) {
-
-        if(resp.data === "newUser") {
-            console.log("NEWUSER", resp.data)
-           $location.path('/signup');
-        } else if(resp.data === "false") {
-          console.log("FALSE", resp.data)
-          return resp.data;
+        console.log("resp", resp)
+        if(!resp.data.username) {
+          $location.path('/signup');
         } else {
-          console.log("TRUE", resp.data)
           context.user = resp.data.username;
-          $location.path('/home/profile');  // concat username to path
+          $location.path('/home/profile');  
         }
       }).catch(function(err) {
-        console.log("RESP CATCH", err)
+        $location.path('/signin');
+        console.log('unauthorized', err)
       })
     },
+
+
     on: function(eventName, callback) {
       socket.on(eventName, function() {
         var args = arguments;
@@ -93,26 +91,30 @@ angular.module('app.services', [])
           }
         });
       });
+    },
+
+
+    addNewRoom: function (newRoomName) {
+      var context = this;
+      return $http({
+        method: 'POST',
+        url: 'api/users/addRoom',
+        data: {roomname: newRoomName, currentUser: this.user}
+      }).then(function(resp) {
+        console.log("RESP", resp.data)
+        context.rooms[newRoomName] = {
+          roomname: newRoomName, 
+          admin: context.user
+        };
+        context.currentRoom = context.rooms[newRoomName];
+      });
+    //move this code into the promise from the $http
     }
-
   };
-
 });
 
 
-// addNewRoom: function(newRoomName) {
-//         // return $http({
-//         //   method: 'POST',
-//         //   url: 'FILL_ME_IN',
-//         //   data: newRoomName
-//         // }).then(function(resp) {
-//         //   console.log(resp);
-//         // });
 
-//         //move this code into the promise from the $http
-//       this.rooms[newRoomName] = {roomname: newRoomName, admin: this.user};
-//       this.currentRoom = this.rooms[newRoomName];
-//     },
 
 //     getRoom: function(room) {
 //       this.currentRoom = this.rooms[room.roomname];

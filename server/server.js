@@ -6,6 +6,7 @@ var morgan = require('morgan');
 var db = require('./db-config.js');
 var User = require('./app/user-model.js');
 
+var Room = require('./app/room-model.js');
 var app = express();
 
 //Set up socket.io
@@ -33,7 +34,8 @@ io.on('connection', function(socket) {
 ///////////////////////
 
 
-app.get('/api/usersdb', function(req, res) {
+
+app.get('/api/users', function(req, res) {
   User.find({}, function(err, users) {
   	console.log(users)
     var allUsers = {};
@@ -45,26 +47,75 @@ app.get('/api/usersdb', function(req, res) {
   });
 });
 
-// app.get('/api/profile/:user', function(req, res) {
-// })
+
+app.get('/api/rooms', function(req, res) {
+  Room.find({}, function(err, rooms) {
+  	console.log(rooms)
+    var allrooms = {};
+    rooms.forEach(function(room) {
+    	console.log('ID', room._id)
+      allrooms[room._id] = room;
+    });
+    res.json(allrooms);
+  });
+});
+
+
+app.post('/api/users/addRoom', function(req, res) {
+	var roomname = req.body.roomname;
+	var admin = req.body.currentUser;
+	Room.findOne({roomname:roomname}).exec(function(err, room) {
+		if(err || !roomname || room) {
+			res.status(400).send('bad request');
+		} else {
+			var newRoom = Room({
+				roomname: roomname,
+				admin: admin,
+				users: [admin]
+			});
+			newRoom.save(function(err, room) {
+				if(err) {
+					return res.status(400).send(new Error('saveRoom error'))
+				} 
+			}).then(function(room) {
+				User.findOne({username: admin}).exec(function(err, adminUser) {
+					if(err || !adminUser) {
+						return res.send(new Error('addRoom error'));
+					} else {
+						adminUser.rooms.push(newRoom.roomname);
+						adminUser.save(function(err, user) {
+							if(err) {
+								res.status(500).send(new Error('Error on save Admin'));
+							}
+						}).then(function() {
+								res.sendStatus(201);
+						})
+					}
+				});				
+			})
+		}
+	})
+})
+
 
 app.post('/api/signup', function(req, res) {
 	var username = req.body.username;
 	var password = req.body.password;
 	User.findOne({username: username}).exec(function(err, user) {
-		if(user) {
-			res.send('user exists');
+
+		if(err) {
+			res.send(err);
+		} else if(user) {
+			res.send();
 		} else {
-			var newUser = User({
+			var newUser = new User({
 				username: username,
 				password: password
 			})
 			newUser.save(function(err, user) {
 				if(err) {
-					res.status(500).json(new Error('ERRRORRR'));
+					res.status(500).json(new Error('Error on save'));
 				} else {
-
-					console.log('USER', user)
 					res.json(user);
 				}
 			})
@@ -76,23 +127,14 @@ app.post('/api/signin', function(req, res) {
 	var username = req.body.username;
 	var password = req.body.password;
 	User.findOne({username: username}).exec(function(err, user) {
-		if(err) {
-			console.log("ERROR LOGIN", err)
-			// next(err);
-			return res.send('false');
-		}
-		if(!user) {
-			// next(new Error('User does not exist'));
-			console.log('NEWUSER')
-			res.send('newUser')
+		if(err || !user) {
+			return res.send(new Error('login error'));
 		} else {
 			user.auth(password, user.password).then(function(match) {
 				if(match) {
-					console.log('MATCH=TRUE')
-					res.json(user);
+					res.send(user);	
 				} else {
-					console.log('MATCH=TRUE')
-					res.send('false');
+					res.status(401).end();
 				}
 			})
 		}
