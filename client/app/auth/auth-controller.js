@@ -6,13 +6,12 @@ angular.module('app.auth', ['app.services'])
   $scope.user = {};
 
   $scope.signIn = function() {
-    UserInfo.signIn($scope.user)
+    UserInfo.signIn($scope.user);
     //TODO: SEND signin info to server to check if user exists; if so, check if passwords is correct.
   };
 
   $scope.signUp = function() {
     UserInfo.signUp($scope.user);
-    console.log("AUTH ", $scope.user)
     //TODO: SEND signin info to server to check if user exists; if so, check if passwords is correct.
   };
 

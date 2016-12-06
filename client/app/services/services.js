@@ -5,7 +5,7 @@ angular.module('app.services', [])
 
 
 .factory('UserInfo', function($http, $rootScope, $location) {
-
+  var socket = io.connect();
   return {
     user: '',
     rooms: {
@@ -27,11 +27,9 @@ angular.module('app.services', [])
     },
     avatar: 'http://www.how-to-draw-funny-cartoons.com/images/draw-a-goose-001.jpg',
     currentRoom: {},
-
     getRoom: function(room) {
       return this.currentRoom = this.rooms[room.roomname];
     },
-    
     signUp: function(user) {
       var context = this;
       return $http({
@@ -39,21 +37,22 @@ angular.module('app.services', [])
         url: 'api/signup',
         data: user
       }).then(function(resp) {
-        if(resp.data === "user exists") {
+        if (resp.data === 'user exists') {
           return resp.data;
         } else {
+          console.log('getting into the expected if loop');
           context.user = resp.data.username;
+          socket.emit('signUp', {username: resp.data.username});
           $location.path('/home/profile');
         }
       }).catch(function(err) {
-        console.log("RESP CATCH", err)
-      })
+        console.log('RESP CATCH', err);
+      });
     },
 
     userProfile: function(user) {
       var context =  this;
     },
-
     signIn: function(user) {
       var context = this;
       return $http({
@@ -61,6 +60,7 @@ angular.module('app.services', [])
         url: 'api/signin',
         data: user
       }).then(function(resp) {
+
         if(resp.data === "newUser") {
             console.log("NEWUSER", resp.data)
            $location.path('/signup');
@@ -75,6 +75,24 @@ angular.module('app.services', [])
       }).catch(function(err) {
         console.log("RESP CATCH", err)
       })
+    },
+    on: function(eventName, callback) {
+      socket.on(eventName, function() {
+        var args = arguments;
+        $rootScope.$apply(function() {
+          callback.apply(socket, args);
+        });
+      });
+    },
+    emit: function(eventName, callback) {
+      socket.emit(eventName, function() {
+        var args = arguments;
+        $rootScope.$apply(function() {
+          if (callback) {
+            callback.apply(socket, args);
+          }
+        });
+      });
     }
 
   };

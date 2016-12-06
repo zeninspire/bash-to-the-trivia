@@ -25,34 +25,50 @@ angular.module('app.user', ['app.services'])
 
 
 .controller('ProfileController', function($scope, UserInfo, $rootScope) {
-  
-  //Local scope variable
-  $scope.activeUsers = [];
-  $scope.questions = [];
-  $scope.answers = [];
-
-
-})
-
-
-.controller('GameController', function($scope, UserInfo, $rootScope) {
 
   //Local scope variable
   $scope.activeUsers = [];
   $scope.questions = [];
   $scope.answers = [];
 
+  $scope.startGame = function() {
+    UserInfo.getQuestions().then(function() {
+
+    });
+  };
+
+  UserInfo.on('newUserSignedUp', function() {
+    console.log('broadcasting');
+  });
+
+
+  $scope.startGame = function() {
+    UserInfo.getQuestions().then(function() {
+
+    });
+  };
+
+  UserInfo.on('newUserSignedUp', function(data) {
+    console.log(data.username, ' got connected');
+  });
+
 
 })
 
-.controller('RoomController', function($scope, UserInfo, $rootScope) {
-  //Updates informations about the room when getting to a specific room
-  // $rootScope.$on('getRoom', function() {
-  //   $scope.room = UserInfo.currentRoom;
-    // $scope.users.usernames = UserInfo.currentRoom.usernames;
 
-  // });
+.controller('GameController', function($scope, UserInfo) {
 
+  //Local scope variable
+  $scope.activeUsers = [];
+  $scope.questions = [];
+  $scope.answers = [];
+
+
+
+
+})
+
+.controller('RoomController', function($scope, UserInfo) {
 
 })
 
