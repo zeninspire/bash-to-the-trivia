@@ -7,7 +7,7 @@ angular.module('app.services', [])
 .factory('UserInfo', function($http, $rootScope, $location) {
 
   return {
-    user: 'OVERWRITTEN',
+    user: '',
     rooms: {
       'room1': {
         roomname: 'room1',
@@ -28,6 +28,9 @@ angular.module('app.services', [])
     avatar: 'http://www.how-to-draw-funny-cartoons.com/images/draw-a-goose-001.jpg',
     currentRoom: {},
 
+    getRoom: function(room) {
+      return this.currentRoom = this.rooms[room.roomname];
+    },
     
     signUp: function(user) {
       var context = this;
@@ -39,7 +42,7 @@ angular.module('app.services', [])
         if(resp.data === "user exists") {
           return resp.data;
         } else {
-          context.user = resp.data;
+          context.user = resp.data.username;
           $location.path('/home/profile');
         }
       }).catch(function(err) {
@@ -49,7 +52,7 @@ angular.module('app.services', [])
 
     userProfile: function(user) {
       var context =  this;
-    }
+    },
 
     signIn: function(user) {
       var context = this;

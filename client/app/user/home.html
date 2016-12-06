@@ -1,9 +1,10 @@
 <!-- sidebar -->
 <div class="col-md-2 sidebar" display="inline">
 <div ui-sref=".profile">{{user}}</div>
-<div>Rooms</div>
+<div ng-init="c=0">Rooms</div>
 <ul>
-  <li ui-sref=".room" ng-repeat="RoomName in rooms" ng-click="goToRoom(RoomName)">{{RoomName.roomname}}</li>
+  <li ui-sref=".room" ng-repeat="RoomName in rooms" ng-click="goToRoom(RoomName)">	{{RoomName.roomname}}
+  </li>
   <form name="newRoom" ng-submit="addRoom(newRoomName)">
     <input type="text" ng-model="newRoomName">
     <button>Add Room</button>
