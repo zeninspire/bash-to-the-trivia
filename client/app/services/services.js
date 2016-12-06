@@ -7,7 +7,7 @@ angular.module('app.services', [])
 .factory('UserInfo', function($http, $rootScope, $location) {
 
   return {
-    user: 'OVERWRITTEN',
+    user: '',
     rooms: {
       'room1': {
         roomname: 'room1',
@@ -28,34 +28,10 @@ angular.module('app.services', [])
     avatar: 'http://www.how-to-draw-funny-cartoons.com/images/draw-a-goose-001.jpg',
     currentRoom: {},
 
-    addNewRoom: function(newRoomName) {
-        // return $http({
-        //   method: 'POST',
-        //   url: 'FILL_ME_IN',
-        //   data: newRoomName
-        // }).then(function(resp) {
-        //   console.log(resp);
-        // });
-
-        //move this code into the promise from the $http
-      this.rooms[newRoomName] = {roomname: newRoomName, admin: this.user};
-      this.currentRoom = this.rooms[newRoomName];
-    },
-
     getRoom: function(room) {
-      this.currentRoom = this.rooms[room.roomname];
-      console.log(this.currentRoom);
-      $rootScope.$emit('getRoom');
-
-      //send server request for users avatars
-      // return $http({
-      //   method: 'GET',
-      //   url: 'FILL_ME_IN',
-      //   params: {room: room.roomname}
-      // }).then(function(resp) {
-      //   console.log(resp);
-      // });
+      return this.currentRoom = this.rooms[room.roomname];
     },
+    
     signUp: function(user) {
       var context = this;
       return $http({
@@ -73,6 +49,11 @@ angular.module('app.services', [])
         console.log("RESP CATCH", err)
       })
     },
+
+    userProfile: function(user) {
+      var context =  this;
+    },
+
     signIn: function(user) {
       var context = this;
       return $http({
@@ -101,7 +82,34 @@ angular.module('app.services', [])
 });
 
 
+// addNewRoom: function(newRoomName) {
+//         // return $http({
+//         //   method: 'POST',
+//         //   url: 'FILL_ME_IN',
+//         //   data: newRoomName
+//         // }).then(function(resp) {
+//         //   console.log(resp);
+//         // });
 
+//         //move this code into the promise from the $http
+//       this.rooms[newRoomName] = {roomname: newRoomName, admin: this.user};
+//       this.currentRoom = this.rooms[newRoomName];
+//     },
+
+//     getRoom: function(room) {
+//       this.currentRoom = this.rooms[room.roomname];
+//       console.log(this.currentRoom);
+//       $rootScope.$emit('getRoom');
+
+//       //send server request for users avatars
+//       // return $http({
+//       //   method: 'GET',
+//       //   url: 'FILL_ME_IN',
+//       //   params: {room: room.roomname}
+//       // }).then(function(resp) {
+//       //   console.log(resp);
+//       // });
+//     },
 
 
 

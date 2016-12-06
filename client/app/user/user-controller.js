@@ -9,8 +9,7 @@ angular.module('app.user', ['app.services'])
 
 
   $scope.goToRoom = function(roomName) {
-    UserInfo.getRoom(roomName);
-    $scope.room = UserInfo.currentRoom;
+    $scope.room = UserInfo.getRoom(roomName);
     $scope.users.usernames = UserInfo.currentRoom.usernames;
 
   };
@@ -22,6 +21,15 @@ angular.module('app.user', ['app.services'])
       return $scope.newRoom.setPristine();
     });*/
   };
+})
+
+
+.controller('ProfileController', function($scope, UserInfo, $rootScope) {
+  
+  //Local scope variable
+  $scope.activeUsers = [];
+  $scope.questions = [];
+  $scope.answers = [];
 
 
 })
