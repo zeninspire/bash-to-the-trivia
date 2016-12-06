@@ -60,6 +60,7 @@ angular.module('app.services', [])
         url: 'api/signin',
         data: user
       }).then(function(resp) {
+
         if(resp.data === "newUser") {
             console.log("NEWUSER", resp.data)
            $location.path('/signup');
@@ -92,7 +93,11 @@ angular.module('app.services', [])
           }
         });
       });
+<<<<<<< HEAD
     }
+=======
+    },
+>>>>>>> broadcasting with socket
 
   };
 
