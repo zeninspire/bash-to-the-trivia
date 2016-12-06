@@ -20,6 +20,32 @@ angular.module('app.user', ['app.services'])
       return $scope.newRoom.setPristine();
     });*/
   };
+
+  $scope.startGame = function() {
+    UserInfo.getQuestions().then(function() {
+
+    });
+  };
+
+
+//SOCKET.IO EVENT LISTENNERS//
+  UserInfo.on('newUserSignedUp', function(data) {
+    console.log(data.username, ' got connected');
+  });
+
+  UserInfo.on('UserLeft', function(username) {
+    UserInfo.removeActiveUser(username);
+  });
+
+  UserInfo.on('UserJoined', function(username) {
+    UserInfo.addActiveUser(username);
+  });
+
+  UserInfo.on('InvitetoNewRoom', function(roomInfo) {
+    UserInfo.invitedToNewRoom(roomname);
+  });
+//////////////////////////////
+
 })
 
 
@@ -29,26 +55,6 @@ angular.module('app.user', ['app.services'])
   $scope.questions = [];
   $scope.answers = [];
 
-  $scope.startGame = function() {
-    UserInfo.getQuestions().then(function() {
-
-    });
-  };
-
-  UserInfo.on('newUserSignedUp', function() {
-    console.log('broadcasting');
-  });
-
-
-  $scope.startGame = function() {
-    UserInfo.getQuestions().then(function() {
-
-    });
-  };
-
-  UserInfo.on('newUserSignedUp', function(data) {
-    console.log(data.username, ' got connected');
-  });
 })
 
 

@@ -1,6 +1,6 @@
 <!-- sidebar -->
 <div class="col-md-2 sidebar" display="inline">
-<div ui-sref=".profile">{{user}}</div>
+<div ui-sref=".profile" ng-click="goToRoom('Profile')">{{user}}</div>
 <div ng-init="c=0">Rooms</div>
 <ul>
   <li ui-sref=".room" ng-repeat="RoomName in rooms" ng-click="goToRoom(RoomName)">	{{RoomName.roomname}}
