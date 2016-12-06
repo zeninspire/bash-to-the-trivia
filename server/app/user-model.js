@@ -6,16 +6,13 @@ var bcrypt = require('bcrypt-nodejs');
 var userSchema = mongoose.Schema({
   username: { type: String, required: true, index: {unique: true }},
   password: { type: String, required: true},
-  channels: { type: Array },
+  rooms: { type: Array }, // RoomIds
   avatarUrl: { type: String },
   age: { type: Number, min: 12, max: 65 },
   created_at: Date,
   updated_at: Date
 })
 
-var channelSchema = mongoose.Schema({
-  name: {type: String, required: true, index: {unique: true}}
-})
 
 var User = mongoose.model('User', userSchema);
 
@@ -48,6 +45,18 @@ User.prototype.auth = function (plain, hash) {
   })
 }
 
+
+User.prototype.addRoom = function(roomname) {
+  var user = this;
+  return new Promise(function(resolve, reject) {
+    if(err) {
+      reject(err);
+    } else {
+      user.rooms.push(roomname)
+      resolve(room)
+    }
+  })
+}
 
 module.exports = User;
 

@@ -6,6 +6,8 @@ var morgan = require('morgan');
 var db = require('./db-config.js');
 var User = require('./app/user-model.js');
 
+var Room = require('./app/room-model.js');
+
 var app = express();
 
 //Set up socket.io
@@ -33,7 +35,8 @@ io.on('connection', function(socket) {
 ///////////////////////
 
 
-app.get('/api/usersdb', function(req, res) {
+
+app.get('/api/users', function(req, res) {
   User.find({}, function(err, users) {
   	console.log(users)
     var allUsers = {};
@@ -48,12 +51,43 @@ app.get('/api/usersdb', function(req, res) {
 // app.get('/api/profile/:user', function(req, res) {
 // })
 
+app.get('/api/rooms', function(req, res) {
+  Room.find({}, function(err, rooms) {
+  	console.log(users)
+    var allrooms = {};
+    users.forEach(function(room) {
+    	console.log('ID', room._id)
+      allrooms[room._id] = room;
+    });
+    res.json(allrooms);
+  });
+});
+
+
+app.post('/api/users/addRoom', function(req, res) {
+	var roomname = req.body.roomname;
+	Room.findOne({roomname:roomname}).exec(function(err, room) {
+		if(err) {
+			res.send(err);
+		} else if(room) {
+			res.send('room exists')
+		} else {
+			var newRoom = Room({
+			})
+		}
+	})
+})
+
+
 app.post('/api/signup', function(req, res) {
 	var username = req.body.username;
 	var password = req.body.password;
 	User.findOne({username: username}).exec(function(err, user) {
-		if(user) {
-			res.send('user exists');
+
+		if(err) {
+			res.send(err);
+		} else if(user) {
+			res.send();
 		} else {
 			var newUser = User({
 				username: username,
@@ -61,10 +95,8 @@ app.post('/api/signup', function(req, res) {
 			})
 			newUser.save(function(err, user) {
 				if(err) {
-					res.status(500).json(new Error('ERRRORRR'));
+					res.status(500).json(new Error('Error on save'));
 				} else {
-
-					console.log('USER', user)
 					res.json(user);
 				}
 			})
@@ -76,23 +108,15 @@ app.post('/api/signin', function(req, res) {
 	var username = req.body.username;
 	var password = req.body.password;
 	User.findOne({username: username}).exec(function(err, user) {
-		if(err) {
-			console.log("ERROR LOGIN", err)
-			// next(err);
-			return res.send('false');
-		}
-		if(!user) {
-			// next(new Error('User does not exist'));
-			console.log('NEWUSER')
-			res.send('newUser')
+		if(err || !user) {
+			console.log("login error: ", err)
+			return res.send(new Error('login error'));
 		} else {
 			user.auth(password, user.password).then(function(match) {
 				if(match) {
-					console.log('MATCH=TRUE')
-					res.json(user);
+					res.send(user);	
 				} else {
-					console.log('MATCH=TRUE')
-					res.send('false');
+					res.status(401).end();
 				}
 			})
 		}
