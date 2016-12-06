@@ -11,13 +11,6 @@ var roomSchema = mongoose.Schema({
 });
 
 
-
-// roomSchema.pre('save', function(next) {
-// 	var room = this;
-// 	User.findOne({username: this.admin}).exec(function(err, user) {
-
-// 	})
-// }
 var Room = mongoose.model('Room', roomSchema);
 
 module.exports = Room;
