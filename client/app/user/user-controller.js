@@ -37,6 +37,10 @@ angular.module('app.user', ['app.services'])
     });
   };
 
+  UserInfo.on('newUserSignedUp', function() {
+    console.log('broadcasting');
+  });
+
 
 })
 

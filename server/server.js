@@ -4,14 +4,33 @@ var path = require('path');
 var mongoose = require('mongoose');
 var morgan = require('morgan');
 var db = require('./db-config.js');
-var User = require('./app/user-model.js')
-
+var User = require('./app/user-model.js');
 
 var app = express();
+
+//Set up socket.io
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
+
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, '../client')));
 app.use(morgan('dev'));
+
+
+//SOCKET.IO MANAGEMENT//
+
+io.on('connection', function(socket) {
+  console.log('connected');
+  socket.on('signUp', function(data) {
+    socket.broadcast.emit('newUserSignedUp');
+    console.log('socket on data: ', data.username);
+  });
+});
+
+
+
+///////////////////////
 
 
 app.get('/api/usersdb', function(req, res) {
@@ -32,10 +51,8 @@ app.get('/api/usersdb', function(req, res) {
 app.post('/api/signup', function(req, res) {
 	var username = req.body.username;
 	var password = req.body.password;
-  console.log("username: ", username);
 	User.findOne({username: username}).exec(function(err, user) {
 		if(user) {
-			console.log('USER EXSITS')
 			res.send('user exists');
 		} else {
 			var newUser = User({
@@ -46,8 +63,9 @@ app.post('/api/signup', function(req, res) {
 				if(err) {
 					res.status(500).json(new Error('ERRRORRR'));
 				} else {
+
 					console.log('USER', user)
-					// next()
+					// next() broadcasting with socket
 					res.json(user);
 				}
 			})
@@ -72,7 +90,7 @@ app.post('/api/signin', function(req, res) {
 			user.auth(password, user.password).then(function(match) {
 				if(match) {
 					console.log('MATCH=TRUE')
-					res.json(user);	
+					res.json(user);
 				} else {
 					console.log('MATCH=TRUE')
 					res.send('false');
@@ -84,7 +102,7 @@ app.post('/api/signin', function(req, res) {
 
 
 
-app.listen(8080, function() {
+http.listen(8080, function() {
   console.log('Listening to port 8080');
 });
 
