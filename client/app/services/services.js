@@ -39,29 +39,17 @@ angular.module('app.services', [])
         url: 'api/signup',
         data: user
       }).then(function(resp) {
-<<<<<<< e96a66ecf4ba5059bf7907e80c79ec3cfd601eb5
-        if (resp.data === 'user exists') {
-          return resp.data;
-        } else {
-          console.log('getting into the expected if loop');
-          context.user = resp.data.username;
-          socket.emit('signUp', {username: resp.data.username});
-=======
         if(!resp.data) {
           $location.path('/signin');
+          // socket.emit('signUp', {username: resp.data.username});
         } else {
           context.user = resp.data.username;
->>>>>>> refactored users login
           $location.path('/home/profile');
         } 
       }).catch(function(err) {
-<<<<<<< e96a66ecf4ba5059bf7907e80c79ec3cfd601eb5
-        console.log('RESP CATCH', err);
-      });
-=======
+
         console.log("signup error: ", err)
       })
->>>>>>> refactored users login
     },
 
     userProfile: function(user) {
@@ -79,19 +67,9 @@ angular.module('app.services', [])
         url: 'api/signin',
         data: user
       }).then(function(resp) {
-<<<<<<< e96a66ecf4ba5059bf7907e80c79ec3cfd601eb5
-
-        if(resp.data === "newUser") {
-            console.log("NEWUSER", resp.data)
-           $location.path('/signup');
-        } else if(resp.data === "false") {
-          console.log("FALSE", resp.data)
-          return resp.data;
-=======
         console.log("resp", resp)
         if(!resp.data.username) {
           $location.path('/signup');
->>>>>>> refactored users login
         } else {
           context.user = resp.data.username;
           $location.path('/home/profile');  
@@ -101,7 +79,8 @@ angular.module('app.services', [])
         console.log('unauthorized', err)
       })
     },
-<<<<<<< e96a66ecf4ba5059bf7907e80c79ec3cfd601eb5
+
+
     on: function(eventName, callback) {
       socket.on(eventName, function() {
         var args = arguments;
@@ -120,21 +99,22 @@ angular.module('app.services', [])
         });
       });
     }
-=======
->>>>>>> refactored users login
+
 
     addNewRoom: function (newRoomName) {
       var context = this;
       return $http({
         method: 'POST',
         url: 'api/users/addRoom',
-        data: {roomname: newRoomName, user: this.user}
+        data: {roomname: newRoomName, currentUser: this.user}
       }).then(function(resp) {
-        console.log("RESP", resp)
-        // this.rooms[newRoomName] = {roomname: newRoomName, admin: this.user};
-        // this.currentRoom = this.rooms[newRoomName];
+        console.log("RESP", resp.data)
+        context.rooms[newRoomName] = {
+          roomname: newRoomName, 
+          admin: context.user
+        };
+        context.currentRoom = context.rooms[newRoomName];
       });
-
     //move this code into the promise from the $http
     }
   };
