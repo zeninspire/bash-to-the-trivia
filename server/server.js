@@ -23,7 +23,7 @@ app.use(morgan('dev'));
 io.on('connection', function(socket) {
   console.log('connected');
   socket.on('signUp', function(data) {
-    socket.broadcast.emit('newUserSignedUp');
+    socket.broadcast.emit('newUserSignedUp', {username: data.username} );
     console.log('socket on data: ', data.username);
   });
 });

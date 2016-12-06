@@ -37,8 +37,8 @@ angular.module('app.user', ['app.services'])
     });
   };
 
-  UserInfo.on('newUserSignedUp', function() {
-    console.log('broadcasting');
+  UserInfo.on('newUserSignedUp', function(data) {
+    console.log(data.username, ' got connected');
   });
 
 
