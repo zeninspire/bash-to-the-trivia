@@ -40,7 +40,7 @@ angular.module('app.services', [])
         if(resp.data === "user exists") {
           return resp.data;
         } else {
-          context.user = resp.data;
+          context.user = resp.data.username;
           $location.path('/home/profile');
         }
       }).catch(function(err) {
