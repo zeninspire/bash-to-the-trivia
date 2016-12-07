@@ -1,4 +1,4 @@
 .DS_Store
-
+app/play-model.js
 client/bower_components/
 node_modules/
