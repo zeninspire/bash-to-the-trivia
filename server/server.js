@@ -24,22 +24,20 @@ app.use(morgan('dev'));
 //SOCKET.IO MANAGEMENT//
 
 io.on('connection', function(socket) {
-  socket.on('signUp', function(username) {
-    socket.username = username;
+  socket.on('signUp', function(user) {
+    socket.username = user.username;
     //Redirecting users to profile page on sign-up so we create a dummy room 'Profile' in which nothing happens
     socket.room = 'Profile';
     //TODO: add user to the active users of the Profile room in REDIS DB
     socket.join('Profile');
-    //
   });
 
-  socket.on('signIn', function(username) {
-    socket.username = username;
+  socket.on('signIn', function(user) {
+    socket.username = user.username;
     //Redirecting users to profile page on sign-in so we create a dummy room 'Profile' in which nothing happens
     socket.room = 'Profile';
     //TODO: add user to the active users of the Profile room in REDIS DB
     socket.join('Profile');
-    //
   });
 
   socket.on('changeRoom', function(newRoom) {
@@ -49,8 +47,12 @@ io.on('connection', function(socket) {
     }
     socket.leave(socket.room);
     //TODO: Add socket.username to newRoom in active user db
-    socket.join(newRoom);
-    io.sockets.in(newRoom).emit('UserJoined', socket.username);
+    socket.room = newRoom.roomname;
+    socket.join(socket.room);
+
+    if (socket.room !== 'Profile') {
+      io.sockets.in(socket.room).emit('UserJoined', socket.username);
+    }
   });
 
   socket.on('addNewRoom', function(newRoom) {
@@ -60,7 +62,8 @@ io.on('connection', function(socket) {
     }
     socket.leave(socket.room);
     //TODO: Add socket.username to newRoom in active user db
-    socket.join(newRoom);
+    socket.room = newRoom.roomname;
+    socket.join(socket.room);
   });
 
   socket.on('disconnect', function() {

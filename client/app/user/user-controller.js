@@ -15,7 +15,6 @@ angular.module('app.user', ['app.services'])
 
   $scope.addRoom = function(newRoomName) {
     // $scope.rooms[newRoomName] = {roomname: newRoomName, admin: $scope.user};
-
     UserInfo.addNewRoom(newRoomName);
   };
 
@@ -32,10 +31,12 @@ angular.module('app.user', ['app.services'])
   });
 
   UserInfo.on('UserLeft', function(username) {
+    console.log(username, ' has left the room');
     UserInfo.removeActiveUser(username);
   });
 
   UserInfo.on('UserJoined', function(username) {
+    console.log(username, ' has joined the room');
     UserInfo.addActiveUser(username);
   });
 

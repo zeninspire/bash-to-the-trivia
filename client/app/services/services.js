@@ -60,7 +60,7 @@ angular.module('app.services', [])
         console.log('unauthorized', err);
       });
     },
-//RE-IMPLEMENTING SOCKETS.IO METHODS TO USE THEM IN THE CONTROLLERS DUE TO SCOPE ISSUES
+//RE-IMPLEMENTING SOCKETS.IO METHODS TO USE THEM IN THE CONTROLLERS DUE TO SCOPE ISSUES//
     on: function(eventName, callback) {
       socket.on(eventName, function() {
         var args = arguments;
