@@ -88,7 +88,6 @@ app.get('/api/people', function(req, res) {
   });
 });
 
-
 app.get('/api/stories', function(req, res) {
   play.Story.find({}, function(err, stories) {
     var allStories = {};
@@ -100,8 +99,6 @@ app.get('/api/stories', function(req, res) {
 });
 
 ////////////////////////
-
-
 app.get('/api/users', function(req, res) {
   User.find({}, function(err, users) {
   	console.log(users)
@@ -113,9 +110,6 @@ app.get('/api/users', function(req, res) {
     res.json(allUsers);
   });
 });
-
-
-
 
 app.get('/api/rooms', function(req, res) {
   Room.find({}, function(err, rooms) {
@@ -221,7 +215,6 @@ app.post('/api/signup', function(req, res) {
 						}
 					})
 				})
-
 				promise2.then(function(resp) {
 					console.log('RESPONSE 2', resp)
 					res.send(resp)

@@ -1,9 +1,9 @@
 var mongoose = require('mongoose');
 var bcrypt = require('bcrypt-nodejs');
 // var Promise = require('bluebird');
+var Schema = mongoose.Schema;
 
-
-var userSchema = mongoose.Schema({
+var userSchema = new Schema({
   username: { type: String, required: true, index: {unique: true }},
   password: { type: String, required: true},
   rooms: {type: Array, default: ["Lobby"]},
