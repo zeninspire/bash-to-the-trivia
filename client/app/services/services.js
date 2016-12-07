@@ -30,6 +30,9 @@ angular.module('app.services', [])
     activeUsers: [],
     getRoom: function(room) {
       socket.emit('changeRoom', room, this.user);
+      if (room === 'Profile') {
+        this.activeUsers = [];
+      }
       return this.currentRoom = this.rooms[room.roomname];
     },
 
