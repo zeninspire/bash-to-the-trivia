@@ -29,7 +29,7 @@ angular.module('app.services', [])
     currentRoom: {},
     activeUsers: [],
     getRoom: function(room) {
-      socket.emit('UserChangeRoom', room, this.user);
+      socket.emit('changeRoom', room, this.user);
       return this.currentRoom = this.rooms[room.roomname];
     },
 
@@ -114,7 +114,11 @@ angular.module('app.services', [])
       this.activeUsers.splice(index, 1);
     },
     addActiveUser: function(username) {
-      this.activeUsers.push(username);
+      if (username !== this.user) {
+        this.activeUsers.push(username);
+      } else {
+        //TODO: Emit server request to REDIS DB to get the database of all the active users in the currentroom
+      }
     },
     invitedToNewRoom: function(roomInfo) {
       this.rooms[roomInfo.roomname] = roomInfo;
