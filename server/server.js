@@ -5,7 +5,9 @@ var mongoose = require('mongoose');
 var morgan = require('morgan');
 var db = require('./db-config.js');
 var User = require('./app/user-model.js');
-
+var Question = require('./app/question-model.js');
+var request = require('request');
+var questionApi = 'https://www.opentdb.com/api.php?amount=10&difficulty=easy&type=multiple';
 var Room = require('./app/room-model.js');
 var app = express();
 
@@ -69,15 +71,7 @@ io.on('connection', function(socket) {
     socket.leave(socket.room);
   });
 
-
-
-
-
 });
-
-
-
-///////////////////////
 
 
 
@@ -229,7 +223,49 @@ app.post('/api/signin', function(req, res) {
 
 function parser (string) {
 	return string[0].toUpperCase() + string.slice(1).toLowerCase();
-}
+};
+
+app.get('/api/questions', function(req, res) {
+    
+  var promise = new Promise(function(resolve, reject) {
+    request.get(questionApi, function (error, response, body) {
+      if (error && !response.statusCode == 200) {
+        reject(err);
+      } else {
+        resolve(body);
+      }
+    });
+  })
+  promise.then(function(body) {
+    var temp = JSON.parse(body).results;
+      for(var i = 0; i < 10; i++) {
+        var qt = new Question({
+          question: temp[i].question,
+          correctAnswer: temp[i].correct_answer,
+          incorrectAnswer: temp[i].incorrect_answers,
+        });
+        qt.save();
+      }
+    res.json(temp);
+  }).catch(function(err) {
+        console.log(err)
+        res.json(err)
+    })
+})
+
+
+app.get('/api/questionsdb', function(req, res) {
+  Question.find({}, function(err, questions) {
+    var allquestions = {};
+    questions.forEach(function(question) {
+    	console.log('ID', question._id)
+      allquestions[question._id] = question;
+    });
+    res.json(allquestions);
+  });
+});
+
+
 
 http.listen(8080, function() {
   console.log('Listening to port 8080');
