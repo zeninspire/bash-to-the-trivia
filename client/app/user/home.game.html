@@ -1,17 +1,16 @@
-<div>Game</div>
+<div id="page-game-wrapper">
+	<h2>Game</h2><hr>
 
-<div>
+	<h4>Players in game</h4>
   <ul>
-    <li ng-repeat="name in users.usernames">{{name}}</li>
-  </ul>
-</div>
-
-<div> Timer </div>
-
-<div>
-  <h3>Display the question here</h3>
+  	<li>[Some names here]</li>
+    <li ng-repeat="name in users.username">{{name}}</li>
+  </ul><br>
+	<span id="timer"><strong>Timer... [tick tock tick tock]</strong></span><br><br>
+  <h5><strong>Q: </strong>[Display the question here]</h5>
   <form>
-    <input type="text" value="Write the answer in this field"></input>
-    <button className="btn btn-primary" type="submit">Submit answer</button>
+  	<label><strong>Answer: </strong></label>
+    <input type="text" placeholder="Write the answer in this field"></input><br>
+    <button class="btn btn-primary" type="submit">Submit answer</button>
   </form>
 </div>
