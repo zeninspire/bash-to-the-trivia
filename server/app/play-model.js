@@ -33,6 +33,27 @@ aaron.save(function (err) {
   });
 });
 
+
+// app.get('/api/people', function(req, res) {
+//   play.Person.find({}, function(err, people) {
+//     var allPeople = {};
+//     people.forEach(function(person) {
+//       people[person._id] = person;
+//     });
+//     res.json(allPeople);
+//   });
+// });
+
+// app.get('/api/stories', function(req, res) {
+//   play.Story.find({}, function(err, stories) {
+//     var allStories = {};
+//     stories.forEach(function(story) {
+//       stories[story._id] = story;
+//     });
+//     res.json(allStories);
+//   });
+// });
+
 // Story
 // .findOne({ title: 'Once upon a timex.' })
 // .populate('_creator')
