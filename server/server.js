@@ -22,51 +22,46 @@ app.use(morgan('dev'));
 //SOCKET.IO MANAGEMENT//
 
 io.on('connection', function(socket) {
-  socket.on('signUp', function(username) {
-    socket.username = username;
+  socket.on('signUp', function(user) {
+    socket.username = user.username;
     //Redirecting users to profile page on sign-up so we create a dummy room 'Profile' in which nothing happens
     socket.room = 'Profile';
     //TODO: add user to the active users of the Profile room in REDIS DB
     socket.join('Profile');
-    //
   });
 
-  socket.on('signIn', function(username) {
-    socket.username = username;
+  socket.on('signIn', function(user) {
+    socket.username = user.username;
     //Redirecting users to profile page on sign-in so we create a dummy room 'Profile' in which nothing happens
     socket.room = 'Profile';
     //TODO: add user to the active users of the Profile room in REDIS DB
     socket.join('Profile');
-    //
   });
 
   socket.on('changeRoom', function(newRoom) {
     //TODO: Remove socket.username from socket.room in active user db
-    console.log('newRoom: ', newRoom);
     if (socket.room !== 'Profile') {
       socket.broadcast.to(socket.room).emit('UserLeft', socket.username);
     }
-    console.log('Inside Change Room SERVER');
-    console.log('socket.room before leave', socket.room);
     socket.leave(socket.room);
     //TODO: Add socket.username to newRoom in active user db
     socket.room = newRoom.roomname;
     socket.join(socket.room);
-    console.log('socket.room after join', socket.room);
 
-    io.sockets.in(socket.room).emit('UserJoined', socket.username);
+    if (socket.room !== 'Profile') {
+      io.sockets.in(socket.room).emit('UserJoined', socket.username);
+    }
   });
 
   socket.on('addNewRoom', function(newRoom) {
-    console.log('addNewRoom from server side');
-    console.log('socket room: ', socket.room);
     //TODO: Remove socket.username from socket.room in active user db
     if (socket.room !== 'Profile') {
       socket.broadcast.to(socket.room).emit('UserLeft', socket.username);
     }
     socket.leave(socket.room);
     //TODO: Add socket.username to newRoom in active user db
-    socket.join(newRoom);
+    socket.room = newRoom.roomname;
+    socket.join(socket.room);
   });
 
   socket.on('disconnect', function() {
