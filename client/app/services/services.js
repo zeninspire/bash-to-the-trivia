@@ -76,7 +76,7 @@ angular.module('app.services', [])
         console.log('unauthorized', err);
       });
     },
-//RE-IMPLEMENTING SOCKETS.IO METHODS TO USE THEM IN THE CONTROLLERS
+//RE-IMPLEMENTING SOCKETS.IO METHODS TO USE THEM IN THE CONTROLLERS DUE TO SCOPE ISSUES
     on: function(eventName, callback) {
       socket.on(eventName, function() {
         var args = arguments;
@@ -98,6 +98,7 @@ angular.module('app.services', [])
 /////////////////////////////////////////////////////////////////////
     addNewRoom: function (newRoomName) {
       var context = this;
+      socket.emit('addNewRoom', newRoomName);
       return $http({
         method: 'POST',
         url: 'api/users/addRoom',

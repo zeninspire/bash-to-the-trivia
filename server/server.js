@@ -51,6 +51,16 @@ io.on('connection', function(socket) {
     io.sockets.in(newRoom).emit('UserJoined', socket.username);
   });
 
+  socket.on('addNewRoom', function(newRoom) {
+    //TODO: Remove socket.username from socket.room in active user db
+    if (socket.room !== 'Profile') {
+      socket.broadcast.to(socket.room).emit('UserLeft', socket.username);
+    }
+    socket.leave(socket.room);
+    //TODO: Add socket.username to newRoom in active user db
+    socket.join(newRoom);
+  });
+
   socket.on('disconnect', function() {
     //TODO: Remove socket.username from socket.room in active user db
     if (socket.room !== 'Profile') {
