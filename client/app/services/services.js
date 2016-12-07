@@ -103,7 +103,8 @@ angular.module('app.services', [])
       socket.emit('addNewPlayer', roomname, newPlayerUsername);
     },
     addedToNewRoom: function(roomname) {
-      console.log('added to room ', roomname);
+      //TODO: update rooms object to add the new roomname, admin and users
+      console.log('You have been added to', roomname);
     },
 
     removeActiveUser: function(username) {

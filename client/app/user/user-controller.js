@@ -37,6 +37,8 @@ angular.module('app.user', ['app.services'])
     if (newPlayerUsername === UserInfo.user) {
       UserInfo.addedToNewRoom(roomname, newPlayerUsername);
     }
+  //TODO: promisify addedtoNewRoom and in the then statement update $scope.rooms to re-render
+
   });
 
   UserInfo.on('newUserSignedUp', function(data) {
