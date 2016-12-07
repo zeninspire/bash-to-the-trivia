@@ -1,8 +1,9 @@
 var mongoose = require('mongoose');
 var bcrypt = require('bcrypt-nodejs');
 var User = require('./user-model.js')
+var Schema = mongoose.Schema;
 
-var roomSchema = mongoose.Schema({
+var roomSchema = new Schema({
   roomname: { type: String, required: true, index: {unique: true }},
   admin: String, // usernameIdref
   users: [],

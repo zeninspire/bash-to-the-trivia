@@ -1,9 +1,6 @@
 // ADD SERVICES AND FACTORIES HERE
 
 angular.module('app.services', [])
-
-
-
 .factory('UserInfo', function($http, $rootScope, $location) {
   var socket = io.connect();
   return {

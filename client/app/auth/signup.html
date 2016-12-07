@@ -1,13 +1,11 @@
-<div>
-<h1>Signup</h1>
+<div class="auth">
+<h1>Signup</h1><hr>
 <form ng-submit='signUp()'>
-  <input placehoder="Username" ng-model="user.username"> </input>
-  <input type="password" placehoder="Password" ng-model="user.password"> </input>
-  <button id="signUpButton">Signup</button>
-  <hr>
-  <pre>user={{user}}</pre>
-  <pre>location={{$location.path}}</pre>
-
+	<label>Username</label><br>
+  <input placehoder="Username" ng-model="user.username"/><br><br>
+  <label>Password</label><br>
+  <input type="password" placehoder="Password" ng-model="user.password"/><br>
+  <button class="btn">Signup now!</button>
 </form>
 
 </div>
