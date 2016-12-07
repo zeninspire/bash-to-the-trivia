@@ -42,16 +42,24 @@ io.on('connection', function(socket) {
 
   socket.on('changeRoom', function(newRoom) {
     //TODO: Remove socket.username from socket.room in active user db
+    console.log('newRoom: ', newRoom);
     if (socket.room !== 'Profile') {
       socket.broadcast.to(socket.room).emit('UserLeft', socket.username);
     }
+    console.log('Inside Change Room SERVER');
+    console.log('socket.room before leave', socket.room);
     socket.leave(socket.room);
     //TODO: Add socket.username to newRoom in active user db
-    socket.join(newRoom);
-    io.sockets.in(newRoom).emit('UserJoined', socket.username);
+    socket.room = newRoom.roomname;
+    socket.join(socket.room);
+    console.log('socket.room after join', socket.room);
+
+    io.sockets.in(socket.room).emit('UserJoined', socket.username);
   });
 
   socket.on('addNewRoom', function(newRoom) {
+    console.log('addNewRoom from server side');
+    console.log('socket room: ', socket.room);
     //TODO: Remove socket.username from socket.room in active user db
     if (socket.room !== 'Profile') {
       socket.broadcast.to(socket.room).emit('UserLeft', socket.username);
