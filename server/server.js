@@ -78,7 +78,28 @@ io.on('connection', function(socket) {
 
 });
 
+app.get('/api/people', function(req, res) {
+  play.Person.find({}, function(err, people) {
+    var allPeople = {};
+    people.forEach(function(person) {
+      people[person._id] = person;
+    });
+    res.json(allPeople);
+  });
+});
 
+
+app.get('/api/stories', function(req, res) {
+  play.Story.find({}, function(err, stories) {
+    var allStories = {};
+    stories.forEach(function(story) {
+      stories[story._id] = story;
+    });
+    res.json(allStories);
+  });
+});
+
+////////////////////////
 app.get('/api/users', function(req, res) {
   User.find({}, function(err, users) {
   	console.log(users)
