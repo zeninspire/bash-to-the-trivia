@@ -39,11 +39,12 @@ angular.module('app.services', [])
         url: 'api/signup',
         data: user
       }).then(function(resp) {
+                  console.log("RESP",resp)
         if(!resp.data) {
           $location.path('/signin');
         } else {
           context.user = resp.data.username;
-          socket.emit('signUp', {username: resp.data.username});
+          // socket.emit('signUp', {username: resp.data.username});
           $location.path('/home/profile');
         } 
       }).catch(function(err) {

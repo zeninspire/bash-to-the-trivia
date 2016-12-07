@@ -6,9 +6,9 @@ var bcrypt = require('bcrypt-nodejs');
 var userSchema = mongoose.Schema({
   username: { type: String, required: true, index: {unique: true }},
   password: { type: String, required: true},
-  rooms: [], // RoomIds
-  avatarUrl: { type: String },
-  age: { type: Number, min: 12, max: 65 },
+  rooms: {type: Array, default: ["Lobby"]},
+  avatarUrl: {type: String },
+  age: { type: Number, min: 3, max: 65 },
   created_at: Date,
   updated_at: Date
 })

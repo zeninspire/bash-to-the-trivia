@@ -11,7 +11,6 @@ angular.module('app.user', ['app.services'])
   $scope.goToRoom = function(roomName) {
     $scope.room = UserInfo.getRoom(roomName);
     $scope.users.usernames = UserInfo.currentRoom.usernames;
-
   };
 
   $scope.addRoom = function(newRoomName) {

@@ -12,7 +12,7 @@ var app = express();
 //Set up socket.io
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-
+var mid1 = require('./middleware.js');
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, '../client')));
@@ -63,9 +63,10 @@ app.get('/api/rooms', function(req, res) {
 
 app.post('/api/users/addRoom', function(req, res) {
 	var roomname = req.body.roomname;
+	console.log("PARSED", roomname)
 	var admin = req.body.currentUser;
 	Room.findOne({roomname:roomname}).exec(function(err, room) {
-		if(err || !roomname || room) {
+		if(err || !roomname) {
 			res.status(400).send('bad request');
 		} else {
 			var newRoom = Room({
@@ -108,17 +109,56 @@ app.post('/api/signup', function(req, res) {
 		} else if(user) {
 			res.send();
 		} else {
-			var newUser = new User({
-				username: username,
-				password: password
+
+			var promise = new Promise(function(resolve, reject) {
+				var newUser = new User({
+					username: username,
+					password: password
+				})
+				newUser.save(function(err, user) {
+					console.log("ON SAVE", err, user)
+					if(err) {
+						// res.status(500).json(new Error('Error on save'));
+						reject(err);
+					} else {
+						resolve(user);
+					}
+				})
 			})
-			newUser.save(function(err, user) {
-				if(err) {
-					res.status(500).json(new Error('Error on save'));
-				} else {
-					res.json(user);
-				}
+
+			promise.then(function(user) {
+				console.log("USER", user)
+				var promise2 = new Promise(function(resolve, reject) {
+					Room.findOne({roomname:'Lobby'}, function(err, room) {
+						console.log(room)
+						if(err) {
+							reject(err);
+						} else {
+							var response = {};
+							response.room = {};
+							room.users.push(user.username);
+							response.room[room.roomname] = {
+								roomname: room.roomname,
+								usernames: room.users
+							}
+							response.username = user.username;
+							room.save(function () {
+								if(err) {
+									res.send(err)
+								}	else {
+									res.json(response)
+								}
+							})
+						}
+					})
+				})
+
+				promise2.then(function(resp) {
+					console.log('RESPONSE 2', resp)
+					res.send(resp)
+				});
 			})
+				
 		}
 	})
 })
@@ -141,7 +181,9 @@ app.post('/api/signin', function(req, res) {
 	})
 })
 
-
+function parser (string) {
+	return string[0].toUpperCase() + string.slice(1).toLowerCase();
+}
 
 http.listen(8080, function() {
   console.log('Listening to port 8080');
