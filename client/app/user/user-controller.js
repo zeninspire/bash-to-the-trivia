@@ -16,9 +16,7 @@ angular.module('app.user', ['app.services'])
   $scope.addRoom = function(newRoomName) {
     // $scope.rooms[newRoomName] = {roomname: newRoomName, admin: $scope.user};
 
-    UserInfo.addNewRoom(newRoomName);/*.then(function() {
-      return $scope.newRoom.setPristine();
-    });*/
+    UserInfo.addNewRoom(newRoomName);
   };
 
   $scope.startGame = function() {
