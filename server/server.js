@@ -22,11 +22,57 @@ app.use(morgan('dev'));
 //SOCKET.IO MANAGEMENT//
 
 io.on('connection', function(socket) {
-  console.log('connected');
-  socket.on('signUp', function(data) {
-    socket.broadcast.emit('newUserSignedUp', {username: data.username} );
-    console.log('socket on data: ', data.username);
+  socket.on('signUp', function(username) {
+    socket.username = username;
+    //Redirecting users to profile page on sign-up so we create a dummy room 'Profile' in which nothing happens
+    socket.room = 'Profile';
+    //TODO: add user to the active users of the Profile room in REDIS DB
+    socket.join('Profile');
+    //
   });
+
+  socket.on('signIn', function(username) {
+    socket.username = username;
+    //Redirecting users to profile page on sign-in so we create a dummy room 'Profile' in which nothing happens
+    socket.room = 'Profile';
+    //TODO: add user to the active users of the Profile room in REDIS DB
+    socket.join('Profile');
+    //
+  });
+
+  socket.on('changeRoom', function(newRoom) {
+    //TODO: Remove socket.username from socket.room in active user db
+    if (socket.room !== 'Profile') {
+      socket.broadcast.to(socket.room).emit('UserLeft', socket.username);
+    }
+    socket.leave(socket.room);
+    //TODO: Add socket.username to newRoom in active user db
+    socket.join(newRoom);
+    io.sockets.in(newRoom).emit('UserJoined', socket.username);
+  });
+
+  socket.on('addNewRoom', function(newRoom) {
+    //TODO: Remove socket.username from socket.room in active user db
+    if (socket.room !== 'Profile') {
+      socket.broadcast.to(socket.room).emit('UserLeft', socket.username);
+    }
+    socket.leave(socket.room);
+    //TODO: Add socket.username to newRoom in active user db
+    socket.join(newRoom);
+  });
+
+  socket.on('disconnect', function() {
+    //TODO: Remove socket.username from socket.room in active user db
+    if (socket.room !== 'Profile') {
+      socket.broadcast.to(socket.room).emit('UserLeft', socket.username);
+    }
+    socket.leave(socket.room);
+  });
+
+
+
+
+
 });
 
 
@@ -77,7 +123,7 @@ app.post('/api/users/addRoom', function(req, res) {
 			newRoom.save(function(err, room) {
 				if(err) {
 					return res.status(400).send(new Error('saveRoom error'))
-				} 
+				}
 			}).then(function(room) {
 				User.findOne({username: admin}).exec(function(err, adminUser) {
 					if(err || !adminUser) {
@@ -92,7 +138,7 @@ app.post('/api/users/addRoom', function(req, res) {
 								res.sendStatus(201);
 						})
 					}
-				});				
+				});
 			})
 		}
 	})
@@ -158,7 +204,7 @@ app.post('/api/signup', function(req, res) {
 					res.send(resp)
 				});
 			})
-				
+
 		}
 	})
 })
@@ -172,7 +218,7 @@ app.post('/api/signin', function(req, res) {
 		} else {
 			user.auth(password, user.password).then(function(match) {
 				if(match) {
-					res.send(user);	
+					res.send(user);
 				} else {
 					res.status(401).end();
 				}
