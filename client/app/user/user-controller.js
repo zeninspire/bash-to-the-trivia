@@ -6,6 +6,7 @@ angular.module('app.user', ['app.services'])
   $scope.rooms = UserInfo.rooms;
   $scope.avatar = UserInfo.avatar;
   $scope.users = {};
+  $scope.newPlayer = {};
 
 
   $scope.goToRoom = function(roomName) {
@@ -18,6 +19,12 @@ angular.module('app.user', ['app.services'])
     UserInfo.addNewRoom(newRoomName);
   };
 
+  $scope.addPlayer = function() {
+    var roomname = UserInfo.currentRoom.roomname;
+    var newPlayerUsername = $scope.newPlayer.username;
+    UserInfo.addNewPlayer(roomname, newPlayerUsername);
+  };
+
   $scope.startGame = function() {
     UserInfo.getQuestions().then(function() {
 
@@ -26,6 +33,12 @@ angular.module('app.user', ['app.services'])
 
 
 //SOCKET.IO EVENT LISTENNERS//
+  UserInfo.on('PlayerAdded', function(roomname, newPlayerUsername) {
+    if (newPlayerUsername === UserInfo.user) {
+      UserInfo.addedToNewRoom(roomname, newPlayerUsername);
+    }
+  });
+
   UserInfo.on('newUserSignedUp', function(data) {
     console.log(data.username, ' got connected');
   });

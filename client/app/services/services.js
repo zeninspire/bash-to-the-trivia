@@ -14,7 +14,7 @@ angular.module('app.services', [])
       if (room === 'Profile') {
         this.activeUsers = [];
       }
-      return this.currentRoom = this.rooms[room.roomname];
+      this.currentRoom = this.rooms[room.roomname];
     },
 
 
@@ -91,9 +91,19 @@ angular.module('app.services', [])
           admin: context.user
         };
         context.currentRoom = context.rooms[newRoomName];
+<<<<<<< HEAD
         console.log('RESP2', resp.data);
         console.log("currentroom", context.rooms[newRoomName])
+=======
+        console.log('context.room: ', context.rooms[newRoomName]);
+>>>>>>> Socket: Implemented add new player feature communication
       });
+    },
+    addNewPlayer: function(roomname, newPlayerUsername) {
+      socket.emit('addNewPlayer', roomname, newPlayerUsername);
+    },
+    addedToNewRoom: function(roomname) {
+      console.log('added to room ', roomname);
     },
 
     removeActiveUser: function(username) {

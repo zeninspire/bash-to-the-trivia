@@ -69,6 +69,14 @@ io.on('connection', function(socket) {
     socket.join(socket.room);
   });
 
+  socket.on('addNewPlayer', function(roomname, newPlayerUsername) {
+    //TODO: add newPlayerUsername in the Rooms DB
+    //TODO: add the roomname in the Users DB
+
+    //Include the broadcasting in the then statement of the DB writing promise
+    socket.broadcast.emit('PlayerAdded', roomname, newPlayerUsername);
+  });
+
   socket.on('disconnect', function() {
     //TODO: Remove socket.username from socket.room in active user db
     if (socket.room !== 'Profile') {
@@ -217,7 +225,7 @@ app.post('/api/signin', function(req, res) {
 
 
 app.get('/api/questions', function(req, res) {
-    
+
   var promise = new Promise(function(resolve, reject) {
     request.get(questionApi, function (error, response, body) {
       if (error && !response.statusCode == 200) {
