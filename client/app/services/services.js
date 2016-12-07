@@ -30,6 +30,7 @@ angular.module('app.services', [])
         } else {
           context.user = resp.data.username;
           context.rooms = resp.data.room;
+          console.log("FORMAT", resp.data);
           socket.emit('signUp', {username: resp.data.username});
           $location.path('/home/profile');
         }
@@ -85,12 +86,13 @@ angular.module('app.services', [])
         url: 'api/users/addRoom',
         data: {roomname: newRoomName, currentUser: this.user}
       }).then(function(resp) {
-        console.log('RESP', resp.data);
         context.rooms[newRoomName] = {
           roomname: newRoomName,
           admin: context.user
         };
         context.currentRoom = context.rooms[newRoomName];
+        console.log('RESP2', resp.data);
+        console.log("currentroom", context.rooms[newRoomName])
       });
     },
 

@@ -145,7 +145,8 @@ app.post('/api/users/addRoom', function(req, res) {
 	console.log("PARSED", roomname)
 	var admin = req.body.currentUser;
 	Room.findOne({roomname:roomname}).exec(function(err, room) {
-		if(err || !roomname) {
+		if(err || room) {
+			console.log("ROOM ERR", room)
 			res.status(400).send('bad request');
 		} else {
 			var newRoom = Room({
