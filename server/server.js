@@ -1,16 +1,17 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var path = require('path');
-var mongoose = require('mongoose');
+var request = require('request');
 var morgan = require('morgan');
+
+
+var mongoose = require('mongoose');
 var db = require('./db-config.js');
 var User = require('./app/user-model.js');
+var Room = require('./app/room-model.js');
 var Question = require('./app/question-model.js');
-var request = require('request');
 var questionApi = 'https://www.opentdb.com/api.php?amount=10&difficulty=easy&type=multiple';
 
-var play = require('./app/play-model.js');
-var Room = require('./app/room-model.js');
 var app = express();
 
 //Set up socket.io
@@ -76,27 +77,6 @@ io.on('connection', function(socket) {
     socket.leave(socket.room);
   });
 
-});
-
-app.get('/api/people', function(req, res) {
-  play.Person.find({}, function(err, people) {
-    var allPeople = {};
-    people.forEach(function(person) {
-      people[person._id] = person;
-    });
-    res.json(allPeople);
-  });
-});
-
-
-app.get('/api/stories', function(req, res) {
-  play.Story.find({}, function(err, stories) {
-    var allStories = {};
-    stories.forEach(function(story) {
-      stories[story._id] = story;
-    });
-    res.json(allStories);
-  });
 });
 
 ////////////////////////
