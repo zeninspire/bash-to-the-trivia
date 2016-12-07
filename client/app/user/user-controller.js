@@ -10,7 +10,7 @@ angular.module('app.user', ['app.services'])
 
   $scope.goToRoom = function(roomName) {
     $scope.room = UserInfo.getRoom(roomName);
-    $scope.users.usernames = UserInfo.currentRoom.usernames;
+    $scope.users.usernames = UserInfo.currentRoom.users;
   };
 
   $scope.addRoom = function(newRoomName) {

@@ -1,16 +1,17 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var path = require('path');
-var mongoose = require('mongoose');
+var request = require('request');
 var morgan = require('morgan');
+
+
+var mongoose = require('mongoose');
 var db = require('./db-config.js');
 var User = require('./app/user-model.js');
+var Room = require('./app/room-model.js');
 var Question = require('./app/question-model.js');
-var request = require('request');
 var questionApi = 'https://www.opentdb.com/api.php?amount=10&difficulty=easy&type=multiple';
 
-var play = require('./app/play-model.js');
-var Room = require('./app/room-model.js');
 var app = express();
 
 //Set up socket.io
@@ -78,33 +79,12 @@ io.on('connection', function(socket) {
 
 });
 
-app.get('/api/people', function(req, res) {
-  play.Person.find({}, function(err, people) {
-    var allPeople = {};
-    people.forEach(function(person) {
-      people[person._id] = person;
-    });
-    res.json(allPeople);
-  });
-});
-
-app.get('/api/stories', function(req, res) {
-  play.Story.find({}, function(err, stories) {
-    var allStories = {};
-    stories.forEach(function(story) {
-      stories[story._id] = story;
-    });
-    res.json(allStories);
-  });
-});
-
 ////////////////////////
 app.get('/api/users', function(req, res) {
   User.find({}, function(err, users) {
   	console.log(users)
     var allUsers = {};
     users.forEach(function(user) {
-    	console.log('ID', user._id)
       allUsers[user._id] = user;
     });
     res.json(allUsers);
@@ -116,12 +96,28 @@ app.get('/api/rooms', function(req, res) {
   	console.log(rooms)
     var allrooms = {};
     rooms.forEach(function(room) {
-    	console.log('ID', room._id)
       allrooms[room._id] = room;
     });
     res.json(allrooms);
   });
 });
+
+// Gets user info for a specific room
+app.get('/api/users/:username', function(req, res) {
+	var username = req.params.username;
+	User.findOne( {username: username}, function(err, user) {
+		res.json({username: username, rooms: user.rooms, avatar: user.avatarUrl})
+	})
+})
+
+// Gets spcific room info in current user scope
+app.get('/api/users/:username/:roomname', function(req, res) {
+	var username = req.params.username;
+	var roomname = req.params.roomname;
+	Room.findOne({roomname: roomname}).exec(function(err, room) {
+		res.send(objectifyResp(room, username))
+	})
+})
 
 
 app.post('/api/users/addRoom', function(req, res) {
@@ -129,7 +125,8 @@ app.post('/api/users/addRoom', function(req, res) {
 	console.log("PARSED", roomname)
 	var admin = req.body.currentUser;
 	Room.findOne({roomname:roomname}).exec(function(err, room) {
-		if(err || !roomname) {
+		if(err || room) {
+			console.log("ROOM ERR", room)
 			res.status(400).send('bad request');
 		} else {
 			var newRoom = Room({
@@ -166,13 +163,11 @@ app.post('/api/signup', function(req, res) {
 	var username = req.body.username;
 	var password = req.body.password;
 	User.findOne({username: username}).exec(function(err, user) {
-
 		if(err) {
 			res.send(err);
 		} else if(user) {
 			res.send();
 		} else {
-
 			var promise = new Promise(function(resolve, reject) {
 				var newUser = new User({
 					username: username,
@@ -181,46 +176,22 @@ app.post('/api/signup', function(req, res) {
 				newUser.save(function(err, user) {
 					console.log("ON SAVE", err, user)
 					if(err) {
-						// res.status(500).json(new Error('Error on save'));
 						reject(err);
 					} else {
 						resolve(user);
 					}
 				})
 			})
-
 			promise.then(function(user) {
-				console.log("USER", user)
-				var promise2 = new Promise(function(resolve, reject) {
-					Room.findOne({roomname:'Lobby'}, function(err, room) {
-						console.log(room)
-						if(err) {
-							reject(err);
-						} else {
-							var response = {};
-							response.room = {};
-							room.users.push(user.username);
-							response.room[room.roomname] = {
-								roomname: room.roomname,
-								usernames: room.users
-							}
-							response.username = user.username;
-							room.save(function () {
-								if(err) {
-									res.send(err)
-								}	else {
-									res.json(response)
-								}
-							})
-						}
+				Room.findOne({roomname:'Lobby'}, function(err, room) {
+					if(err) return res.sendStatus(500);
+					room.users.push(user.username);
+					room.save(function(err) {
+						if(err) res.send(err)
+							res.json(objectifyResp(room, user.username))
 					})
 				})
-				promise2.then(function(resp) {
-					console.log('RESPONSE 2', resp)
-					res.send(resp)
-				});
 			})
-
 		}
 	})
 })
@@ -243,9 +214,7 @@ app.post('/api/signin', function(req, res) {
 	})
 })
 
-function parser (string) {
-	return string[0].toUpperCase() + string.slice(1).toLowerCase();
-};
+
 
 app.get('/api/questions', function(req, res) {
     
@@ -286,6 +255,25 @@ app.get('/api/questionsdb', function(req, res) {
     res.json(allquestions);
   });
 });
+
+
+// HELPER FUNCTIONS
+function objectifyResp(selected, username) {
+	var currentRoom = {}
+	currentRoom[selected.roomname] = {
+		roomname: selected.roomname,
+		users: selected.users,
+		admin: selected.admin
+	};
+	return {
+		username: username,
+		room: currentRoom
+	}
+}
+
+function parser (string) {
+	return string[0].toUpperCase() + string.slice(1).toLowerCase();
+};
 
 
 
