@@ -8,6 +8,8 @@ var User = require('./app/user-model.js');
 var Question = require('./app/question-model.js');
 var request = require('request');
 var questionApi = 'https://www.opentdb.com/api.php?amount=10&difficulty=easy&type=multiple';
+
+var play = require('./app/play-model.js');
 var Room = require('./app/room-model.js');
 var app = express();
 
@@ -73,6 +75,28 @@ io.on('connection', function(socket) {
 
 });
 
+app.get('/api/people', function(req, res) {
+  play.Person.find({}, function(err, people) {
+    var allPeople = {};
+    people.forEach(function(person) {
+      people[person._id] = person;
+    });
+    res.json(allPeople);
+  });
+});
+
+
+app.get('/api/stories', function(req, res) {
+  play.Story.find({}, function(err, stories) {
+    var allStories = {};
+    stories.forEach(function(story) {
+      stories[story._id] = story;
+    });
+    res.json(allStories);
+  });
+});
+
+////////////////////////
 
 
 app.get('/api/users', function(req, res) {
@@ -86,6 +110,8 @@ app.get('/api/users', function(req, res) {
     res.json(allUsers);
   });
 });
+
+
 
 
 app.get('/api/rooms', function(req, res) {
