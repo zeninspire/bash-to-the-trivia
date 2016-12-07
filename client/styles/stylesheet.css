@@ -50,7 +50,19 @@ button {
 #page-content-wrapper {
     width: 100%;
     position: absolute;
-    padding: 15px;
+    padding: 30px;
+}
+
+#page-room-wrapper {
+    width: 100%;
+    position: absolute;
+    padding: 30px;
+}
+
+#page-game-wrapper {
+    width: 100%;
+    position: absolute;
+    padding: 30px;
 }
 
 #wrapper.toggled #page-content-wrapper {
@@ -133,4 +145,44 @@ button {
         margin-right: 0;
     }
 }
+
+
+/*.h1, .h2, .h3, h1, h2, h3 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    padding: 10px;
+}*/
+
+.navbar-default {
+    margin: 0px;
+}
+.navbar-btn {
+    margin: 15px;
+}
+
+.auth {
+    margin: 20px;
+}
+
+#timer {
+    font-size: 17px;
+    color: #ff4455;
+}
+
+
+strong {
+    font-size: 17px;
+}
+
+.username {
+    padding-left: 20px;
+}
+
+
+
+
+
+
+
+
 
