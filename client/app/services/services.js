@@ -8,23 +8,7 @@ angular.module('app.services', [])
   var socket = io.connect();
   return {
     user: '',
-    rooms: {
-      'room1': {
-        roomname: 'room1',
-        usernames: ['A', 'B', 'C', 'Tonny'],
-        admin: 'Tonny'
-      },
-      'room2': {
-        roomname: 'room2',
-        usernames: ['D', 'E', 'F', 'Tonny'],
-        admin: 'Tonny'
-      },
-      'room3': {
-        roomname: 'room3',
-        usernames: ['G', 'H', 'I', 'Tonny'],
-        admin: 'Tonny'
-      }
-    },
+    rooms: {},
     avatar: 'http://www.how-to-draw-funny-cartoons.com/images/draw-a-goose-001.jpg',
     currentRoom: {},
     activeUsers: [],
@@ -48,7 +32,7 @@ angular.module('app.services', [])
           $location.path('/signin');
         } else {
           context.user = resp.data.username;
-          context.rooms = resp.data.rooms;
+          context.rooms = resp.data.room;
           socket.emit('signUp', {username: resp.data.username});
           $location.path('/home/profile');
         }
