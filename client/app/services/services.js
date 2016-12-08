@@ -106,7 +106,7 @@ angular.module('app.services', [])
     addedToNewRoom: function(room) {
       this.rooms[room.roomname] = room;
       //TODO: update rooms object to add the new roomname, admin and users
-      console.log('You have been added to', room.roomname);
+      alert('You have been added to' + room.roomname);
     },
 
     removeActiveUser: function(username) {
