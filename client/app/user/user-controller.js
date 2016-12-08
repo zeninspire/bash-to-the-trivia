@@ -1,6 +1,6 @@
 angular.module('app.user', ['app.services'])
 
-.controller('HomeController', function($scope, UserInfo) {
+.controller('HomeController', function($scope, $location, UserInfo) {
   //Passing data from the UserInfo factory
   $scope.user = UserInfo.user;
   $scope.rooms = UserInfo.rooms;
@@ -88,12 +88,24 @@ angular.module('app.user', ['app.services'])
   $scope.answers = [];
 
 
-
-
 })
 
-.controller('RoomController', function($scope, UserInfo) {
+.controller('RoomController', function($scope, $stateParams, UserInfo) {
+
+  $scope.RoomName = $stateParams.RoomName;
+  $scope.users.usernames = UserInfo.currentRoom.usernames;
+
 
 })
 
 ;
+
+
+
+
+
+
+
+
+
+

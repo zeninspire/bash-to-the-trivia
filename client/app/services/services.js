@@ -79,6 +79,7 @@ angular.module('app.services', [])
     },
 /////////////////////////////////////////////////////////////////////
     addNewRoom: function (newRoomName) {
+      console.log('newRoomName', newRoomName)
       var context = this;
       socket.emit('addNewRoom', newRoomName);
       return $http({
@@ -91,8 +92,7 @@ angular.module('app.services', [])
           admin: context.user
         };
         context.currentRoom = context.rooms[newRoomName];
-        console.log('RESP2', resp.data);
-        console.log("currentroom", context.rooms[newRoomName])
+        $location.path('/home/room/' + newRoomName); 
       });
     },
     addNewPlayer: function(roomname, newPlayerUsername) {
