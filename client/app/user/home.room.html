@@ -6,7 +6,12 @@
 	  <div class="gamePlayer">
 	  <!-- <div ng-repeat="url in players.avatars"><img ng-src="{{url}}" ng-model="url"></div> -->
 	  <li ng-repeat="name in users.usernames">{{name}}</li>
-	  </div>
+
+	  <form name="newPlayer" ng-submit="addPlayer(newPlayer.username)">
+	  	<input name="newPlayerUsername" type="text" ng-model="newPlayer.username"/>
+	  	<button class="deleteGame btn">Add Player</button>
+	  </form>
+	</div>
 
 	  <!-- <li class="gamePlayer"><img id="minnie" ng-src="https://cdn-img.easyicon.net/png/11652/1165292.gif"></br>Minne</li>
 	  <li class="gamePlayer"><img id="mickey" ng-src="http://icons.iconarchive.com/icons/iconka/tailwaggers/128/dog-rich-icon.png"></br>Mickey</li>
@@ -14,8 +19,12 @@
 	  <li class="newUser"><img ng-src="http://www.axialis.com/objects/ip_icon_05_sample5d.png"></br>Add a new user!</li> -->
 	</div>
 
-	<button class="startGame btn" ui-sref="homeState.game">Start Game</button> <br><!-- ng-click="startGame()" -->
 
+	<button class="startGame btn" ui-sref="homeState.game" ng-click="startGame()">Start Game</button> <br><!-- ng-click="startGame()" -->
+	<pre>users.usernames={{users.usernames}}</pre>
+	<pre>users={{users}}</</pre>
+	<pre>room.roomname={{rooms.roomname}}</pre>
+	<pre>room={{rooms}}</pre>
 	<button class="deleteGame btn">Delete Game</button> <!-- ng-click="deleteGame()" -->
 
 </div>

@@ -71,40 +71,42 @@ io.on('connection', function(socket) {
 
   socket.on('addNewPlayer', function(roomname, newPlayerUsername) {
     var savedRoom = {};
+    console.log('newPlayerUsername: ', newPlayerUsername);
     User.findOne({username: newPlayerUsername}).exec(function(err, user) {
+      console.log('user: ', user);
       if (err) {
-        res.status(400).send('User not found');
+        console.log('User not found');
       } else {
         var userAlreadyInRoom = false;
         user.rooms.forEach(function(room) {
           if (room === roomname) {
             userAlreadyInRoom = true;
-            res.status(400).send('User already in the room');
+            console.log('User already in the room');
           }
         });
         if (!userAlreadyInRoom) {
           user.rooms.push(roomname);
           user.save(function(err, user) {
             if (err) {
-              return res.status(400).send(new Error('Add new room to user error'));
+              console.log('Add new room to user error');
             }
           }).then(function() {
             Room.findOne({roomname: roomname}).exec(function(err, room) {
               if (err) {
-                res.status(400).send('Room doesn\'t exist');
+                console.log('Room doesn\'t exist');
               } else {
                 var userAlreadyInRoom = false;
                 room.users.forEach(function(user) {
                   if (user === newPlayerUsername) {
                     userAlreadyInRoom = true;
-                    res.status(400).send('User already in the room');
+                    console.log('User already in the room');
                   }
                 });
                 if (!userAlreadyInRoom) {
                   room.users.push(newPlayerUsername);
                   room.save(function(err, room) {
                     if (err) {
-                      return res.status(400).send(new Error('Add new user to room error'));
+                      console.log('Add new user to room error');
                     }
                     savedRoom = room;
                   }).then(function(room) {
@@ -116,6 +118,24 @@ io.on('connection', function(socket) {
           });
         }
       }
+    });
+  });
+
+  socket.on('startNewGame', function() {
+    var allQuestions = {};
+    Question.find({}, function(err, questions) {
+      if (err) {
+        console.log('Cannot get questions from database');
+      }
+      // for(var 1 = 0; i < 10; i++) {
+      //   allQuestions[question._id]
+      // }
+      questions.forEach(function(question) {
+        allQuestions[question._id] = question;
+      });
+      console.log('allquestions: ', allQuestions);
+    }).then(function() {
+      io.sockets.in(socket.room).emit('SendQuestions', allQuestions);
     });
   });
 

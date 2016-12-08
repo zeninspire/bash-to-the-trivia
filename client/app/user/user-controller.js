@@ -10,25 +10,28 @@ angular.module('app.user', ['app.services'])
 
 
   $scope.goToRoom = function(roomName) {
-    $scope.room = UserInfo.getRoom(roomName);
+    UserInfo.getRoom(roomName);
     $scope.users.usernames = UserInfo.currentRoom.users;
   };
 
   $scope.addRoom = function(newRoomName) {
     // $scope.rooms[newRoomName] = {roomname: newRoomName, admin: $scope.user};
     UserInfo.addNewRoom(newRoomName);
+    $scope.newRoom.newRoomNameField.$setPristine();
+    $scope.newRoom.newRoomNameField.$setPristine(true);
+    $scope.newRoomName = '';
+
   };
 
-  $scope.addPlayer = function() {
+  $scope.addPlayer = function(newPlayerUsername) {
     var roomname = UserInfo.currentRoom.roomname;
-    var newPlayerUsername = $scope.newPlayer.username;
+    // var newPlayerUsername = $scope.newPlayer.username;
     UserInfo.addNewPlayer(roomname, newPlayerUsername);
   };
 
   $scope.startGame = function() {
-    UserInfo.getQuestions().then(function() {
+    UserInfo.startNewGame();
 
-    });
   };
 
 
@@ -45,8 +48,11 @@ angular.module('app.user', ['app.services'])
       });
 
     }
-  //TODO: promisify addedtoNewRoom and in the then statement update $scope.rooms to re-render
+  });
 
+  UserInfo.on('SendQuestions', function(questions) {
+    console.log('questions', questions);
+    $location.path('/home/game');
   });
 
   UserInfo.on('newUserSignedUp', function(data) {
