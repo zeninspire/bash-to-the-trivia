@@ -14,7 +14,7 @@ angular.module('app.services', [])
       if (room === 'Profile') {
         this.activeUsers = [];
       }
-      return this.currentRoom = this.rooms[room.roomname];
+      this.currentRoom = this.rooms[room.roomname];
     },
 
 
@@ -94,6 +94,14 @@ angular.module('app.services', [])
         console.log('RESP2', resp.data);
         console.log("currentroom", context.rooms[newRoomName])
       });
+    },
+    addNewPlayer: function(roomname, newPlayerUsername) {
+      socket.emit('addNewPlayer', roomname, newPlayerUsername);
+    },
+    addedToNewRoom: function(room) {
+      this.rooms[room.roomname] = room;
+      //TODO: update rooms object to add the new roomname, admin and users
+      console.log('You have been added to', room.roomname);
     },
 
     removeActiveUser: function(username) {

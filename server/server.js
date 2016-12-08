@@ -69,6 +69,56 @@ io.on('connection', function(socket) {
     socket.join(socket.room);
   });
 
+  socket.on('addNewPlayer', function(roomname, newPlayerUsername) {
+    var savedRoom = {};
+    User.findOne({username: newPlayerUsername}).exec(function(err, user) {
+      if (err) {
+        res.status(400).send('User not found');
+      } else {
+        var userAlreadyInRoom = false;
+        user.rooms.forEach(function(room) {
+          if (room === roomname) {
+            userAlreadyInRoom = true;
+            res.status(400).send('User already in the room');
+          }
+        });
+        if (!userAlreadyInRoom) {
+          user.rooms.push(roomname);
+          user.save(function(err, user) {
+            if (err) {
+              return res.status(400).send(new Error('Add new room to user error'));
+            }
+          }).then(function() {
+            Room.findOne({roomname: roomname}).exec(function(err, room) {
+              if (err) {
+                res.status(400).send('Room doesn\'t exist');
+              } else {
+                var userAlreadyInRoom = false;
+                room.users.forEach(function(user) {
+                  if (user === newPlayerUsername) {
+                    userAlreadyInRoom = true;
+                    res.status(400).send('User already in the room');
+                  }
+                });
+                if (!userAlreadyInRoom) {
+                  room.users.push(newPlayerUsername);
+                  room.save(function(err, room) {
+                    if (err) {
+                      return res.status(400).send(new Error('Add new user to room error'));
+                    }
+                    savedRoom = room;
+                  }).then(function(room) {
+                    socket.broadcast.emit('PlayerAdded', savedRoom, newPlayerUsername);
+                  });
+                }
+              }
+            });
+          });
+        }
+      }
+    });
+  });
+
   socket.on('disconnect', function() {
     //TODO: Remove socket.username from socket.room in active user db
     if (socket.room !== 'Profile') {
@@ -217,7 +267,7 @@ app.post('/api/signin', function(req, res) {
 
 
 app.get('/api/questions', function(req, res) {
-    
+
   var promise = new Promise(function(resolve, reject) {
     request.get(questionApi, function (error, response, body) {
       if (error && !response.statusCode == 200) {
