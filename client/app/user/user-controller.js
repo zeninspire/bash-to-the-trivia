@@ -33,9 +33,17 @@ angular.module('app.user', ['app.services'])
 
 
 //SOCKET.IO EVENT LISTENNERS//
-  UserInfo.on('PlayerAdded', function(roomname, newPlayerUsername) {
+  UserInfo.on('PlayerAdded', function(room, newPlayerUsername) {
+    //Making sure we are on the right user/socket before we update the view
     if (newPlayerUsername === UserInfo.user) {
-      UserInfo.addedToNewRoom(roomname, newPlayerUsername);
+      var promise = new Promise(function(resolve, reject) {
+        UserInfo.addedToNewRoom(room);
+      });
+
+      return promise.then(function() {
+        $scope.rooms = UserInfo.rooms;
+      });
+
     }
   //TODO: promisify addedtoNewRoom and in the then statement update $scope.rooms to re-render
 

@@ -70,11 +70,53 @@ io.on('connection', function(socket) {
   });
 
   socket.on('addNewPlayer', function(roomname, newPlayerUsername) {
-    //TODO: add newPlayerUsername in the Rooms DB
-    //TODO: add the roomname in the Users DB
-
-    //Include the broadcasting in the then statement of the DB writing promise
-    socket.broadcast.emit('PlayerAdded', roomname, newPlayerUsername);
+    var savedRoom = {};
+    User.findOne({username: newPlayerUsername}).exec(function(err, user) {
+      if (err) {
+        res.status(400).send('User not found');
+      } else {
+        var userAlreadyInRoom = false;
+        user.rooms.forEach(function(room) {
+          if (room === roomname) {
+            userAlreadyInRoom = true;
+            res.status(400).send('User already in the room');
+          }
+        });
+        if (!userAlreadyInRoom) {
+          user.rooms.push(roomname);
+          user.save(function(err, user) {
+            if (err) {
+              return res.status(400).send(new Error('Add new room to user error'));
+            }
+          }).then(function() {
+            Room.findOne({roomname: roomname}).exec(function(err, room) {
+              if (err) {
+                res.status(400).send('Room doesn\'t exist');
+              } else {
+                var userAlreadyInRoom = false;
+                room.users.forEach(function(user) {
+                  if (user === newPlayerUsername) {
+                    userAlreadyInRoom = true;
+                    res.status(400).send('User already in the room');
+                  }
+                });
+                if (!userAlreadyInRoom) {
+                  room.users.push(newPlayerUsername);
+                  room.save(function(err, room) {
+                    if (err) {
+                      return res.status(400).send(new Error('Add new user to room error'));
+                    }
+                    savedRoom = room;
+                  }).then(function(room) {
+                    socket.broadcast.emit('PlayerAdded', savedRoom, newPlayerUsername);
+                  });
+                }
+              }
+            });
+          });
+        }
+      }
+    });
   });
 
   socket.on('disconnect', function() {

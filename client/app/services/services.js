@@ -91,20 +91,17 @@ angular.module('app.services', [])
           admin: context.user
         };
         context.currentRoom = context.rooms[newRoomName];
-<<<<<<< HEAD
         console.log('RESP2', resp.data);
         console.log("currentroom", context.rooms[newRoomName])
-=======
-        console.log('context.room: ', context.rooms[newRoomName]);
->>>>>>> Socket: Implemented add new player feature communication
       });
     },
     addNewPlayer: function(roomname, newPlayerUsername) {
       socket.emit('addNewPlayer', roomname, newPlayerUsername);
     },
-    addedToNewRoom: function(roomname) {
+    addedToNewRoom: function(room) {
+      this.rooms[room.roomname] = room;
       //TODO: update rooms object to add the new roomname, admin and users
-      console.log('You have been added to', roomname);
+      console.log('You have been added to', room.roomname);
     },
 
     removeActiveUser: function(username) {
