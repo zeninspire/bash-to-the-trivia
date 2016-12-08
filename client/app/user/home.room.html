@@ -1,14 +1,12 @@
 <div id="page-room-wrapper">
-	<h3>{{room.roomname}}</h3><hr>
+	<h3>{{RoomName}}</h3><hr>
 
 	<div class="players">
 		<h3>Players</h3>
 	  <div class="gamePlayer">
 	  <!-- <div ng-repeat="url in players.avatars"><img ng-src="{{url}}" ng-model="url"></div> -->
 	  <li ng-repeat="name in users.usernames">{{name}}</li>
-	  <input placehoder="newPlayer" ng-model="newPlayer.username"/>
-	  <button class="deleteGame btn" ng-click="addPlayer()">Add Player</button>
-	</div>
+	  </div>
 
 	  <!-- <li class="gamePlayer"><img id="minnie" ng-src="https://cdn-img.easyicon.net/png/11652/1165292.gif"></br>Minne</li>
 	  <li class="gamePlayer"><img id="mickey" ng-src="http://icons.iconarchive.com/icons/iconka/tailwaggers/128/dog-rich-icon.png"></br>Mickey</li>
@@ -17,8 +15,7 @@
 	</div>
 
 	<button class="startGame btn" ui-sref="homeState.game">Start Game</button> <br><!-- ng-click="startGame()" -->
-	<pre>users.usernames={{users.usernames}}</pre>
-	<pre>users={{users}}</</pre>
+
 	<button class="deleteGame btn">Delete Game</button> <!-- ng-click="deleteGame()" -->
 
 </div>

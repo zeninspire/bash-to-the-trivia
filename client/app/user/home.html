@@ -5,13 +5,13 @@
 		<ul>
 			
 			<h4>Rooms</h4>
-			  <li ui-sref=".room" ng-repeat="RoomName in rooms" ng-click="goToRoom(RoomName)">
-			  	<a>{{RoomName.roomname}}</a>
+			  <li ng-repeat="RoomName in rooms" ng-click="goToRoom(RoomName)">
+			  	<a ui-sref="homeState.room({RoomName: RoomName.roomname})">{{RoomName.roomname}}</a>
 			  </li>
 			<br>
 		  <form name="newRoom" ng-submit="addRoom(newRoomName)">
 		    <input type="text" ng-model="newRoomName"><br>
-		    <button>Add Room</button><br>
+		    <button ng-submit="goToRoom(newRoomName)">Add Room</button><br>
 		  </form><br><br>
 		  
 		  <h4>My Friends</h4>
