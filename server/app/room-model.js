@@ -11,13 +11,11 @@ var roomSchema = new Schema({
   updated_at: Date
 });
 
-
-
 var Room = mongoose.model('Room', roomSchema);
 
 var lobby = Room({
 	roomname: 'Lobby'
-})
+});
 
 lobby.save(function(err) {
 	if(err) {
@@ -25,7 +23,7 @@ lobby.save(function(err) {
 	} else {
 		console.log('SAVE lobby SUCCESFUL')
 	}
-})
+});
 
 module.exports = Room;
 

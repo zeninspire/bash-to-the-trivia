@@ -2,9 +2,10 @@ angular.module('app', ['app.auth', 'app.user', 'ui.router'])
 
 
 .config(function($stateProvider) {
+
   $stateProvider
   .state('signinState', {
-    url: '/',
+    url: '/signin',
     templateUrl: 'app/auth/signin.html',
     controller: 'AuthController'
   })
@@ -15,24 +16,24 @@ angular.module('app', ['app.auth', 'app.user', 'ui.router'])
   })
   .state('homeState', {
     url: '/home',
-    abstract: true, //TODO
+    abstract: true,
     templateUrl: 'app/user/home.html',
     controller: 'HomeController'
   })
   .state('homeState.profile', {
     url: '/profile',
     templateUrl: 'app/user/home.profile.html', //#1 view
-    controller: 'ProfileController'
+    controller: 'HomeController'
   })
   .state('homeState.room', {
-    url: '/room/:RoomName',
+    url: '/room/:roomname',
     templateUrl: 'app/user/home.room.html',
-    controller: 'RoomController'
+    controller: 'HomeController'
   })
   .state('homeState.game', {
     url: '/game',
     templateUrl: 'app/user/home.game.html',
-    controller: 'GameController'
+    controller: 'HomeController'
   })
   .state('otherwise', {
     url: '*path',
