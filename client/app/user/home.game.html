@@ -15,30 +15,34 @@
   </form> -->
 
 <!-- GAME HANDLING -->
-
-<h5><strong>Question {{gameState.questionsAttempted}} of 10: {{questionSet[0].question}}</strong></h5>
-
+  <div ng-if="gameState.gameFinished === false" class="col-md-12">
+    <h5 class="col-md-6"><strong>Question {{gameState.questionsAttempted}} of 10: {{questionSet[gameState.questionsAttempted-1].question}}</strong></h5>
+  </div>
+  <div class="col-md-12" ng-if="gameState.gameFinished === false">
     <label><strong>Answers: </strong></label>
 
-    <form ng-repeat="choice in questionSet[0].answerChoices track by $index">
+    <form ng-repeat="choice in questionSet[gameState.questionsAttempted-1].answerChoices track by $index">
       <input class="answerChoice" type="radio" ng-model="gameState.index" ng-value="$index">
         <label for="answerChoice">{{choice}}</label>
       </input>
     </form><br>
+  </div>
 
-    <div ng-if="gameState.isCorrect === 'yes'" class="feedback correct">
+    <div ng-if="gameState.isCorrect === 'yes' && gameState.gameFinished === false" class="feedback correct">
       You are CORRECT!
     </div>
-    <div ng-if="gameState.isCorrect === 'no'" class="feedback incorrect">
+    <div ng-if="gameState.isCorrect === 'no' && gameState.gameFinished === false" class="feedback incorrect">
       You are INCORRECT! The correct answer is {{questionSet[0].correct_answer}}.
     </div>
-    <div ng-if="gameState.isCorrect === 'pending'" class="feedback pending">
+    <div ng-if="gameState.isCorrect === 'pending' && gameState.gameFinished === false" class="feedback pending">
       Pick an answer SLOWPOKE!
     </div>
-    <button class="btn btn-primary" type="submit" ng-click="submitAnswer()" ng-disabled="gameState.isCorrect !== 'pending'">Submit answer</button>
+    <button ng-if="gameState.gameFinished === false" class="btn btn-primary" type="submit" ng-click="submitAnswer()" ng-disabled="gameState.isCorrect !== 'pending'">Submit answer</button>
     </br></br>
     <div ng-if="gameState.gameFinished" class="endgame-message">
-      You got {{gameState.numCorrect}}/{{gameState.questionsAttempted}} correct!
+      You got {{gameState.numCorrect}}/{{gameState.questionsAttempted}} correct <br><br>
+      <button ui-sref="^.room({roomname: currentRoom.roomname})" class="btn btn-primary">Back to {{currentRoom.roomname}}</button>
     </div>
+
 
 </div>

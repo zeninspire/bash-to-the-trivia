@@ -3,7 +3,7 @@
 angular.module('app.services', [])
 .factory('UserInfo', function($http, $rootScope, $location, $timeout) {
   var socket = io.connect();
-  
+
   return {
     user: {},
     rooms: {},
@@ -50,22 +50,6 @@ angular.module('app.services', [])
     },
 
     startNewGame: function() {
-       function randomizeAnswerChoices(question) {
-        var answers = question.incorrect_answers;
-        answers.push(question.correct_answer);
-        answers = shuffleArr(answers);
-        return answers;
-      };
-
-      function shuffleArr(arr) {
-        for (var i = 0; i < arr.length; i++) {
-          var targetIndex = Math.floor(Math.random()*arr.length);
-          var temp = arr[targetIndex];
-          arr[targetIndex] = arr[i];
-          arr[i] = temp;
-        }
-        return arr;
-      };
       return $http({
         method: 'GET',
         url: 'api/questions'
@@ -76,7 +60,6 @@ angular.module('app.services', [])
           resp.data[i].answerChoices = resp.data[i].incorrect_answers;
         }
         $rootScope.questionSet = resp.data;
-        console.log('resp.data', resp);
         socket.emit('startNewGame', resp.data);
       }, function errorCallback(err) {
           throw err;
@@ -104,12 +87,12 @@ angular.module('app.services', [])
     },
 
     getRoom: function(room) {
-
+      socket.emit('changeRoom', room);
       this.currentRoom = this.rooms[room.roomname];
       return this.currentRoom;
     },
 
-    //RE-IMPLEMENTING SOCKETS.IO METHODS TO USE THEM IN THE CONTROLLERS DUE TO SCOPE ISSUES//
+//RE-IMPLEMENTING SOCKETS.IO METHODS TO USE THEM IN THE CONTROLLERS DUE TO SCOPE ISSUES//
     on: function(eventName, callback) {
       if(!socket.hasListeners(eventName)) {
         socket.on(eventName, function() {
@@ -130,7 +113,7 @@ angular.module('app.services', [])
         });
       });
     },
-    /////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
 
 
     signUp: function(user) {
@@ -166,7 +149,7 @@ angular.module('app.services', [])
           $location.path('/signup');
         } else {
           context.user.username = resp.data.user.username;
-          context.rooms = resp.data.rooms;          
+          context.rooms = resp.data.rooms;
           socket.emit('signIn', {username: resp.data.user.username});
           $location.path('/home/profile');
         }
@@ -175,89 +158,6 @@ angular.module('app.services', [])
         console.log('unauthorized', err);
       });
     },
-
-/////GAME HANDLING/////
-
-//getQuestions --> send request to server/API to fetch a set of 10 questions.
-//in the meantime, mash up the correct answer and incorrect answers and store them all in the answers array.
-    // getQuestions: function(cb) {
-    //   function randomizeAnswerChoices(question) {
-    //     var answers = question.incorrect_answers;
-    //     answers.push(question.correct_answer);
-    //     answers = shuffleArr(answers);
-    //     return answers;
-    //   };
-
-    //   function shuffleArr(arr) {
-    //     for (var i = 0; i < arr.length; i++) {
-    //       var targetIndex = Math.floor(Math.random()*arr.length);
-    //       var temp = arr[targetIndex];
-    //       arr[targetIndex] = arr[i];
-    //       arr[i] = temp;
-    //     }
-    //     return arr;
-    //   };
-
-    //   return $http({
-    //       method: 'GET',
-    //       url: '/api/questions',
-    //     }).then(function(resp){
-
-    //     for (var i = 0; i < resp.data.length; i++) {
-    //       resp.data[i].answerChoices = randomizeAnswerChoices(resp.data[i]);
-    //     };
-
-    //     $rootScope.questionSet=resp.data;
-
-    //     cb();
-    //   })
-    // },
-
-
-
-
-
-    playGame: function(roundEndCb, gameEndCb) {
-      var roundDuration = 6000;
-
-      //Triggered at the start of every question. Starts a timer of roundDuration milliseconds.
-      function _startTimer(roundDuration) {
-        $timeout(function() {
-          _roundEnd();
-        }, roundDuration)
-      }
-
-      //Triggered at the end of every question. starts a new round aka next question.
-      function _roundEnd() {
-        roundEndCb(function() {
-          gameStart();
-        });
-      }
-
-      //Triggered at the end of every game (aka all questions done)
-      function _gameEnd() {
-        gameEndCb();
-      }
-
-      //starts the whole game. gameStart is recursive as it calls itself inside of startTimer via _roundEnd(). Once game has ended (as determined by there being no more questions in questionSet) _gameEnd is triggered
-      function gameStart() {
-        if ($rootScope.questionSet.length > 1) {
-          _startTimer(roundDuration);
-        } else {
-          _gameEnd();
-        }
-      }
-
-      gameStart();
-    },
-
-    evaluateAnswer: function(selectedIndex, cb) {
-      var activeQuestion = $rootScope.questionSet[0];
-      var isCorrect = activeQuestion.answerChoices[selectedIndex] === activeQuestion.correct_answer
-      cb(isCorrect);
-    }
-
-///////////////////////
 
   };
 });

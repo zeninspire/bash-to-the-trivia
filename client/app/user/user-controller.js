@@ -1,6 +1,6 @@
 angular.module('app.user', ['app.services'])
 
-.controller('HomeController', function($scope, $location, UserInfo, $rootScope) {
+.controller('HomeController', function($scope, $location, UserInfo, $rootScope, $timeout) {
 
   //Passing data from the UserInfo factory
   $scope.user = UserInfo.user;
@@ -11,7 +11,6 @@ angular.module('app.user', ['app.services'])
 
   $scope.goToRoom = function(roomName) {
     $scope.currentRoom = UserInfo.getRoom(roomName);
-    console.log('currentRoom',  $scope.currentRoom)
   };
 
   $scope.addRoom = function(newRoomName) {
@@ -86,33 +85,22 @@ angular.module('app.user', ['app.services'])
 /////GAME HAMDLING/////
 
 
-  // $scope.gameState = {
-  //   index: -1, //index that user has selected.
-  //   isCorrect: "pending",//pending = no answer yet. "yes"/"no" self explanatory
-  //   numCorrect: 0,
-  //   questionsAttempted: 1, //total num of questions
-  //   gameFinished: false
-  // };
-
   $scope.startingGame = function() {
+    var roundDuration = 1000;
     $scope.gameState = _resetGameState();
 //have to be nested, in order to get the questionSet first
-    // UserInfo.getQuestions(function(){
-    UserInfo.playGame(handleRoundEnd, handleGameEnd);
-    // });
+    // UserInfo.playGame(handleRoundEnd, handleGameEnd);
 
 //function is called at the end of every round
     function handleRoundEnd(callback) {
-      console.log('$scope.gameState.questionsAttempted: ', $scope.gameState.questionsAttempted);
       $scope.gameState.questionsAttempted++;
-      $scope.gameState.isCorrect = "pending";
-      $rootScope.questionSet.shift();
+      $scope.gameState.isCorrect = 'pending';
       callback();
     }
 
 //function is called at the end of every game
     function handleGameEnd() {
-      $scope.gameState.isCorrect = "pending";
+      $scope.gameState.isCorrect = 'pending';
     }
 
 //resets the game state to the initial values. called at the start of every game
@@ -125,29 +113,48 @@ angular.module('app.user', ['app.services'])
         gameFinished: false
       };
     }
+
+    function _startTimer(roundDuration) {
+      $timeout(function() {
+        handleRoundEnd(gameStart);
+
+        if ($scope.gameState.questionsAttempted === 10) {
+          $scope.gameState.gameFinished = true;
+        }
+
+      }, roundDuration);
+    }
+
+    function gameStart() {
+      if ($scope.gameState.questionsAttempted < 10) {
+        _startTimer(roundDuration);
+      } else {
+        handleGameEnd();
+      }
+    }
+    gameStart();
   };
 
 //when user submits an answer, checks to see if it is the right answer.
   $scope.submitAnswer = function() {
-    UserInfo.evaluateAnswer($scope.gameState.index, function(isCorrect) {
-      if (isCorrect) {
-        $scope.gameState.numCorrect++;
-        $scope.gameState.isCorrect = 'yes';
-      } else {
-        $scope.gameState.isCorrect = 'no';
-      }
-    });
+    var questionIndex = $scope.gameState.questionsAttempted - 1;
+    console.log('questionIndex: ', questionIndex);
+    console.log('questionSet: ', $rootScope.questionSet);
+    var activeQuestion = $rootScope.questionSet[questionIndex];
+    var isCorrect = activeQuestion.answerChoices[$scope.gameState.index] === activeQuestion.correct_answer;
 
-    if ($scope.gameState.questionsAttempted === 10) {
-      $scope.gameState.gameFinished = true;
+    if (isCorrect) {
+      $scope.gameState.numCorrect++;
+      $scope.gameState.isCorrect = 'yes';
+    } else {
+      $scope.gameState.isCorrect = 'no';
     }
+
+
     $scope.clear();
   };
-// })
 
 ///////////////////////
-
-
 
 });
 
