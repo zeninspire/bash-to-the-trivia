@@ -3,6 +3,7 @@ var bodyParser = require('body-parser');
 var path = require('path');
 var request = require('request');
 var morgan = require('morgan');
+// var jwt = require('jsonwebtoken');
 
 
 var mongoose = require('mongoose');
@@ -24,24 +25,25 @@ app.use(express.static(path.join(__dirname, '../client')));
 app.use(morgan('dev'));
 
 
-var connections =[];
-var users =[];
+var usersX =[];
+var roomsX = {
+  'Profile': [],
+  'Lobby': []
+};
 //SOCKET.IO MANAGEMENT//
 
 // SEVDA VERSION //
 io.on('connection', function(socket) {
+
   socket.on('signUp', function(user) {
-  	connections.push(socket);
     socket.username = user.username;
     socket.roomname = 'Profile';
-    users.push(socket.username)
     socket.join('Profile');
-    console.log(socket.username+' connected to '+socket.roomname)
-    console.log('#connections=', connections.length);
+    roomsX[socket.roomname].push(socket.username);
+    console.log(socket.username + ' connected to ' + socket.roomname);
   });
 
    socket.on('disconnect', function() {
-   	connections.splice(connections.indexOf(socket), 1);
     if (socket.roomname !== 'Profile') {
       socket.broadcast.to(socket.roomname).emit('UserLeft', socket.username);
     }
@@ -53,20 +55,25 @@ io.on('connection', function(socket) {
     socket.username = user.username;
     socket.roomname = 'Profile';
     socket.join('Profile');
+    roomsX[socket.roomname].push(socket.username);
+    console.log(socket.username + ' connected to ' + socket.roomname);
   });
 
-  socket.on('changeRoom', function(newRoom) {
-    if (socket.roomname !== 'Profile') {
-      socket.broadcast.to(socket.roomname).emit('UserLeft', socket.username);
+  socket.on('changeRoom', function(newRoomObj) {
+    var currentRoom = socket.roomname;
+    var newRoom = newRoomObj.roomname;
+    socket.broadcast.to(currentRoom).emit('UserLeft', socket.username);
+    var index = roomsX[currentRoom].indexOf(socket.username);
+    roomsX[currentRoom].splice(index, 1);
+    socket.leave(currentRoom);
+    socket.roomname = newRoom;
+    if (roomsX[newRoom] === undefined) {
+      roomsX[newRoom] = [socket.username];
+    } else {
+      roomsX[newRoom].push(socket.username);
     }
-    console.log('changeRoom newRoom: ', newRoom.roomname);
-    socket.leave(socket.roomname);
-    socket.roomname = newRoom.roomname;
-    socket.join(socket.roomname);
-
-    if (socket.roomname !== 'Profile') {
-      io.sockets.in(socket.roomname).emit('UserJoined', socket.username);
-    }
+    socket.join(newRoom);
+    io.sockets.in(newRoom).emit('UserJoined', socket.username, roomsX[newRoom]);
   });
 
   socket.on('addNewRoom', function(newRoomName) {
@@ -304,6 +311,7 @@ app.post('/api/signup', function(req, res) {
 					room.users.push(newUser);
 					room.save(function(err) {
 						if(err) return res.send(err);
+            // var token = jwt.sign(user, 'bashtothetrivia');
 						var rooms = {};
 						var user = {};
 						var resp = {};
@@ -315,6 +323,7 @@ app.post('/api/signup', function(req, res) {
 						user.username = username;
 						resp.user = user;
 						resp.rooms = rooms;
+            // resp.token = token;
 						res.json(resp);
 					})
 				})
@@ -322,12 +331,6 @@ app.post('/api/signup', function(req, res) {
 		}
 	})
 })
-
-
-// query.where('comments').elemMatch(function (elem) {
-//   elem.where('author', 'bnoguchi')
-//   elem.where('votes').gte(5);
-// });
 
 app.post('/api/signin', function(req, res) {
 	var username = req.body.username;
@@ -385,14 +388,14 @@ app.get('/api/questions', function(req, res) {
   promise.then(function(body) {
     var temp = JSON.parse(body).results;
     res.json(temp);
-      // for(var i = 0; i < 10; i++) {
-      //   var qt = new Question({
-      //     question: temp[i].question,
-      //     correctAnswer: temp[i].correct_answer,
-      //     incorrectAnswer: temp[i].incorrect_answers,
-      //   });
-      //   qt.save();
-      // }
+      for(var i = 0; i < 10; i++) {
+        var qt = new Question({
+          question: temp[i].question,
+          correctAnswer: temp[i].correct_answer,
+          incorrectAnswer: temp[i].incorrect_answers,
+        });
+        qt.save();
+      }
   }).catch(function(err) {
       res.status(404).json(err)
     })

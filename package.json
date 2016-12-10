@@ -20,6 +20,8 @@
     "bluebird": "^3.4.6",
     "body-parser": "*",
     "express": "^4.14.0",
+    "express-jwt": "^5.1.0",
+    "jsonwebtoken": "^7.2.1",
     "mongodb": "^2.2.12",
     "mongoose": "^4.7.1",
     "morgan": "^1.7.0",
