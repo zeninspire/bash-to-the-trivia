@@ -1,7 +1,7 @@
 angular.module('app', ['app.auth', 'app.user', 'ui.router'])
 
 
-.config(function($stateProvider) {
+.config(function($stateProvider, $httpProvider) {
 
   $stateProvider
   .state('signinState', {
@@ -40,4 +40,27 @@ angular.module('app', ['app.auth', 'app.user', 'ui.router'])
     templateUrl: 'app/auth/signin.html',
     controller: 'AuthController'
   });
-});
+
+  // $httpProvider.interceptors.push('AttachTokens');
+
+})
+// .factory('AttachTokens', function($window) {
+
+//   var attach = {
+//     request: function(object) {
+//       var jwt = $window.localStorage.getItem('com.trivia');
+//       if (jwt) {
+//         object.headers['x-access-token'] = jwt;
+//       }
+//       object.headers['Allow-Control-Allow-Origin'] = '*';
+//       return object;
+//     }
+//   };
+//   return attach;
+// }).run(function($rootScope, $location, UserInfo) {
+
+//   $rootScope.$on('$stateChandeStart', function(event, next, current) {
+//     if (next.$$state && next.$$state.authenticate &&)
+//   })
+
+// });

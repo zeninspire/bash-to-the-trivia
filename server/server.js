@@ -59,6 +59,7 @@ io.on('connection', function(socket) {
     if (socket.roomname !== 'Profile') {
       socket.broadcast.to(socket.roomname).emit('UserLeft', socket.username);
     }
+    console.log('changeRoom newRoom: ', newRoom.roomname);
     socket.leave(socket.roomname);
     socket.roomname = newRoom.roomname;
     socket.join(socket.roomname);
@@ -68,13 +69,15 @@ io.on('connection', function(socket) {
     }
   });
 
-  socket.on('addNewRoom', function(newRoom) {
+  socket.on('addNewRoom', function(newRoomName) {
     if (socket.roomname !== 'Profile') {
       socket.broadcast.to(socket.roomname).emit('UserLeft', socket.username);
     }
+    console.log('addNewRoom newRoom: ', newRoomName);
     socket.leave(socket.roomname);
-    socket.roomname = newRoom.roomname;
+    socket.roomname = newRoomName;
     socket.join(socket.roomname);
+    console.log('socket.roomname: ', socket.roomname);
   });
 
   // function updateActiveUsers() {

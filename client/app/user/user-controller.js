@@ -91,6 +91,7 @@ angular.module('app.user', ['app.services'])
   $scope.startingGame = function() {
     var roundDuration = 5000;
     $scope.gameState = _resetGameState();
+    var mathRandom = Math.random() * 1000;
 //have to be nested, in order to get the questionSet first
     // UserInfo.playGame(handleRoundEnd, handleGameEnd);
 
@@ -104,7 +105,10 @@ angular.module('app.user', ['app.services'])
 //function is called at the end of every game
     function handleGameEnd() {
       $scope.gameState.isCorrect = 'pending';
-      UserInfo.sendScore($scope.gameState.numCorrect * 100);
+      $timeout(function() {
+        UserInfo.sendScore($scope.gameState.numCorrect * 100);
+        console.log('mathRandom: ', mathRandom);
+      }, mathRandom);
     }
 
 //resets the game state to the initial values. called at the start of every game
