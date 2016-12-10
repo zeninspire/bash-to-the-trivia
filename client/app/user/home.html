@@ -9,15 +9,13 @@
 			  </li>
 			<br>
 
-			<form name="newRoom" ng-submit="addRoom(newRoomName)"> 
+			<form name="newRoom" ng-submit="addRoom(newRoomName)">
 		    <input type="text" name="newthing" ng-model="newRoomName" /><br>
 		    <input type="submit" value="Add Room" /><br>
 		  </form><br><br>
 
 		  <h4>My Friends</h4>
-		  <li>
-		  	<a href="">[A list of friends]</a>
-		  </li>
+		  <li ng-repeat="users in activeUsers">{{users}}</li>
 
 		</ul>
 	</div>

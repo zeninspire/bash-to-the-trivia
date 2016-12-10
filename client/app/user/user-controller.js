@@ -68,12 +68,20 @@ angular.module('app.user', ['app.services'])
 
   $scope.on('UserLeft', function(username) {
     console.log(username, ' has left the room');
-    $scope.removeActiveUser(username);
+    var index = $scope.activeUsers.indexOf(username);
+    $scope.activeUsers.splice(index, 1);
+    // $scope.removeActiveUser(username);
   });
 
- $scope.on('UserJoined', function(username) {
-    console.log(username, ' has joined the room');
-    $scope.addActiveUser(username);
+ $scope.on('UserJoined', function(username, activeUsers) {
+    if (username === $scope.user.username) {
+      $scope.activeUsers = activeUsers;
+      console.log(activeUsers, ' are in the room');
+    } else {
+      $scope.activeUsers.push(username);
+      console.log(username, ' has joined the room');
+    }
+    // $scope.addActiveUser(username);
   });
 
   $scope.on('InvitetoNewRoom', function(roomInfo) {

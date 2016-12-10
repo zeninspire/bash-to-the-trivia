@@ -78,17 +78,17 @@ angular.module('app.services', [])
       return this.rooms[room.roomname] = room;
       //TODO: update rooms object to add the new roomname, admin and users
     },
-    removeActiveUser: function(username) {
-      var index = this.activeUsers.indexOf(username);
-      this.activeUsers.splice(index, 1);
-    },
-    addActiveUser: function(username) {
-      if (username !== this.user) {
-        this.activeUsers.push(username);
-      } else {
-        //TODO: Emit server request to REDIS DB to get the database of all the active users in the currentroom
-      }
-    },
+    // removeActiveUser: function(username) {
+    //   var index = this.activeUsers.indexOf(username);
+    //   this.activeUsers.splice(index, 1);
+    // },
+    // addActiveUser: function(username) {
+    //   if (username !== this.user) {
+    //     this.activeUsers.push(username);
+    //   } else {
+    //     //TODO: Emit server request to REDIS DB to get the database of all the active users in the currentroom
+    //   }
+    // },
     invitedToNewRoom: function(roomInfo) {
       this.rooms[roomInfo.roomname] = roomInfo;
     },
@@ -167,6 +167,8 @@ angular.module('app.services', [])
           context.user.username = resp.data.user.username;
           context.rooms = resp.data.rooms;
           socket.emit('signUp', {username: resp.data.user.username});
+          // console.log('TOKEN: ', resp.data.token);
+          // return resp.data.token;
           $location.path('/home/profile');
         }
       }).catch(function(err) {
