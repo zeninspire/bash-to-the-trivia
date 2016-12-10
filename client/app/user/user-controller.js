@@ -31,6 +31,7 @@ angular.module('app.user', ['app.services'])
 
   $scope.startGame = function() {
     UserInfo.startNewGame();
+    console.log($scope.currentRoom);
   };
 
   $scope.on = UserInfo.on;
@@ -41,7 +42,7 @@ angular.module('app.user', ['app.services'])
 
 //SOCKET.IO EVENT LISTENNERS//
   $scope.on('PlayerAdded', function(room, newPlayerUsername) {
-    console.log('before',$scope.currentRoom)
+    console.log('before', newPlayerUsername);
     //Making sure we are on the right user/socket before we update the view
     if ($scope.currentRoom.roomname === room.roomname) {
       $scope.currentRoom = UserInfo.currentRoom;
@@ -57,8 +58,6 @@ angular.module('app.user', ['app.services'])
   $scope.on('SendQuestions', function(questions) {
     console.log('questions', questions);
     $location.path('/home/game');
-
-
     $rootScope.questionSet = questions;
     $scope.startingGame();
   });
@@ -80,13 +79,17 @@ angular.module('app.user', ['app.services'])
   $scope.on('InvitetoNewRoom', function(roomInfo) {
     $scope.invitedToNewRoom(roomname);
   });
+
+  $scope.on('UpdateScores', function() {
+    UserInfo.updateAllScores();
+  });
 //////////////////////////////
 
 /////GAME HAMDLING/////
 
 
   $scope.startingGame = function() {
-    var roundDuration = 1000;
+    var roundDuration = 5000;
     $scope.gameState = _resetGameState();
 //have to be nested, in order to get the questionSet first
     // UserInfo.playGame(handleRoundEnd, handleGameEnd);
@@ -101,6 +104,7 @@ angular.module('app.user', ['app.services'])
 //function is called at the end of every game
     function handleGameEnd() {
       $scope.gameState.isCorrect = 'pending';
+      UserInfo.sendScore($scope.gameState.numCorrect * 100);
     }
 
 //resets the game state to the initial values. called at the start of every game
@@ -138,8 +142,6 @@ angular.module('app.user', ['app.services'])
 //when user submits an answer, checks to see if it is the right answer.
   $scope.submitAnswer = function() {
     var questionIndex = $scope.gameState.questionsAttempted - 1;
-    console.log('questionIndex: ', questionIndex);
-    console.log('questionSet: ', $rootScope.questionSet);
     var activeQuestion = $rootScope.questionSet[questionIndex];
     var isCorrect = activeQuestion.answerChoices[$scope.gameState.index] === activeQuestion.correct_answer;
 

@@ -12,16 +12,19 @@ angular.module('app.services', [])
     activeUsers: [],
 
     addNewRoom: function (newRoomName) {
-      console.log('newRoomName', newRoomName)
       var context = this;
       return $http({
         method: 'POST',
         url: 'api/users/addRoom',
         data: {roomname: newRoomName, currentUser: context.user.username}
       }).then(function successCallback(resp) {
+        var user = {
+          username: context.user.username,
+          score: 0
+        };
         context.rooms[newRoomName] = {
           roomname: newRoomName,
-          users: [context.user.username],
+          users: [user],
           admin: context.user.username
         };
         context.currentRoom = context.rooms[newRoomName];
@@ -40,9 +43,13 @@ angular.module('app.services', [])
         url: 'api/users/addNewPlayer',
         data: {roomname: roomname, newPlayerUsername: newPlayerUsername}
       }).then(function successCallback(resp) {
-        context.rooms[roomname].users.push(newPlayerUsername);
+        var newPlayer = {
+          username: newPlayerUsername,
+          score: 0,
+        };
+        context.rooms[roomname].users.push(newPlayer);
         context.currentRoom = context.rooms[roomname];
-        console.log('addNewPlayer SUCCESS', context.currentRoom)
+        console.log('addNewPlayer SUCCESS', context.currentRoom);
         socket.emit('addNewPlayer', context.currentRoom, newPlayerUsername);
       }, function errorCallback(err) {
           throw err;
@@ -55,14 +62,14 @@ angular.module('app.services', [])
         url: 'api/questions'
       }).then(function successCallback(resp) {
 
-        for(var i = 0; i < resp.data.length; i++) {
-          resp.data[i].incorrect_answers.splice(Math.floor(Math.random() * 4), 0, resp.data[i].correct_answer)
+        for (var i = 0; i < resp.data.length; i++) {
+          resp.data[i].incorrect_answers.splice(Math.floor(Math.random() * 4), 0, resp.data[i].correct_answer);
           resp.data[i].answerChoices = resp.data[i].incorrect_answers;
         }
         $rootScope.questionSet = resp.data;
         socket.emit('startNewGame', resp.data);
       }, function errorCallback(err) {
-          throw err;
+        throw err;
       });
     },
 
@@ -92,9 +99,39 @@ angular.module('app.services', [])
       return this.currentRoom;
     },
 
+    sendScore: function(score) {
+      var context = this;
+      return $http({
+        method: 'POST',
+        url: 'api/updateScores',
+        data: {username: context.user.username,
+          score: score,
+          roomname: context.currentRoom.roomname
+        }
+      }).then(function successCallback(resp) {
+        socket.emit('updateScores', context.currentRoom.roomname);
+      }, function errorCallback(err) {
+        throw err;
+      });
+    },
+
+    updateAllScores: function() {
+      var context = this;
+      return $http({
+        method: 'GET',
+        url: 'api/getScores/' + context.currentRoom.roomname
+      }).then(function successCallback(resp) {
+        context.rooms[resp.data.roomname] = resp.data;
+        context.currentRoom = context.rooms[resp.data.roomname];
+        console.log('1: ', context.currentRoom);
+      }, function errorCallback(err) {
+        throw err;
+      });
+    },
+
 //RE-IMPLEMENTING SOCKETS.IO METHODS TO USE THEM IN THE CONTROLLERS DUE TO SCOPE ISSUES//
     on: function(eventName, callback) {
-      if(!socket.hasListeners(eventName)) {
+      if (!socket.hasListeners(eventName)) {
         socket.on(eventName, function() {
           var args = arguments;
           $rootScope.$apply(function() {

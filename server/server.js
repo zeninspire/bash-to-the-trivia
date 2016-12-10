@@ -83,10 +83,15 @@ io.on('connection', function(socket) {
 
   socket.on('addNewPlayer', function(room, newPlayerUsername) {
     io.sockets.emit('PlayerAdded', room, newPlayerUsername);
-  });  
+  });
 
   socket.on('startNewGame', function(allQuestions) {
     io.sockets.in(socket.roomname).emit('SendQuestions', allQuestions);
+  });
+
+  socket.on('updateScores', function(room) {
+    console.log(room);
+    io.sockets.in(room).emit('UpdateScores');
   });
 
 
@@ -149,7 +154,7 @@ app.post('/api/users/addRoom', function(req, res) {
 			var newRoom = Room({
 				roomname: roomname,
 				admin: admin,
-				users: [admin]
+				users: [{username: admin, score: 0}]
 			});
 			newRoom.save(function(err, room) {
 				if(err) {
@@ -179,15 +184,19 @@ app.post('/api/users/addRoom', function(req, res) {
 app.post('/api/users/addNewPlayer', function(req, res) {
 	var roomname = req.body.roomname;
 	var newPlayerUsername = req.body.newPlayerUsername;
-	Room.findOne({roomname: roomname, users: newPlayerUsername}).exec(function(err, room) {
+	Room.findOne({roomname: roomname, 'users.username': newPlayerUsername}).exec(function(err, room) {
 		if(room) {
 			return res.status(400).send('User already in room');
 		} else {
 			Room.findOne({roomname: roomname}).exec(function(err, room) {
 				if (err || room === null) {
 					return res.status(400).send('Room doesn\'t exist');
-				} 
-				room.users.push(newPlayerUsername);
+				}
+        var newPlayer = {
+          username: newPlayerUsername,
+          score: 0
+        };
+				room.users.push(newPlayer);
 				room.save(function(err){
 					if(err) {
 						return res.status(400).send('Cannot save room updates');
@@ -195,19 +204,68 @@ app.post('/api/users/addNewPlayer', function(req, res) {
 					User.findOne({username: newPlayerUsername}).exec(function(err, user) {
 						if (user === null || err) {
 							return res.status(400).send('User doesn\'t exist');
-						} 
+						}
 						user.rooms.push(roomname);
 						user.save(function(err){
 							if(err) {
 								return res.status(400).send('Cannot save user updates');
 							}
-							res.status(201).send('Added new player succesfully');						
+							res.status(201).send('Added new player succesfully');
 						});
 					});
 				});
 			});
 		}
-	}); 
+	});
+});
+
+app.post('/api/updateScores', function(req, res) {
+  var username = req.body.username;
+  var score = req.body.score;
+  var roomname = req.body.roomname;
+  console.log('req.body', req.body)
+  Room.findOne({roomname: roomname}).where('users.username', username).exec(function(err, room) {
+    if (err) {
+      return res.status(400).send('Room not found');
+    } else {
+      //It it necessary to update the entire array and not just the user data, mongoose doesn't save when updating by index
+      var usersArray = [];
+      for (var i = 0; i < room.users.length; i++) {
+        if (room.users[i].username === username) {
+          var newUser = {
+            username: username,
+            score: room.users[i].score + score
+          };
+          usersArray.push(newUser);
+        } else {
+          usersArray.push(room.users[i]);
+        }
+      }
+      room.users = usersArray;
+      room.save(function(err) {
+        if (err) {
+          return res.status(400).send('Cannot update score in DB');
+        } else {
+          return res.send('Score saved in DB');
+        }
+      });
+    }
+  });
+});
+
+app.get('/api/getScores/:roomname', function(req, res) {
+  var roomname = req.params.roomname;
+  Room.findOne({roomname: roomname}).exec(function(err, room) {
+    if (err) {
+      return res.status(400).send('Room not found');
+    } else {
+      var resp = {};
+      resp.roomname = room.roomname;
+      resp.users = room.users;
+      resp.admin = room.admin;
+      return res.send(resp);
+    }
+  });
 });
 
 app.post('/api/signup', function(req, res) {
@@ -234,11 +292,13 @@ app.post('/api/signup', function(req, res) {
 				})
 			})
 			promise.then(function(user) {
-				console.log('user', user)
 				Room.findOne({roomname: "Lobby"}, function(err, room) {
-					console.log('room', room)
 					if(err) return res.sendStatus(500);
-					room.users.push(user.username);
+          var newUser = {
+            username: user.username,
+            score: 0
+          };
+					room.users.push(newUser);
 					room.save(function(err) {
 						if(err) return res.send(err);
 						var rooms = {};
@@ -275,8 +335,7 @@ app.post('/api/signin', function(req, res) {
 		} else {
 			user.auth(password, user.password).then(function(match) {
 				if(match) {
-					Room.find({users: username}, function(err, foundRooms) {
-						console.log('ROOM FIND USERS', foundRooms)
+					Room.find({'users.username': username}, function(err, foundRooms) {
 						if(err) return res.sendStatus(500);
 						// console.log('ROOMS/ERR', foundRooms.length)
 						var rooms = {};
@@ -310,7 +369,7 @@ app.post('/api/signin', function(req, res) {
 
 
 
-app.get('/api/questions', function(req, res) {  
+app.get('/api/questions', function(req, res) {
   var promise = new Promise(function(resolve, reject) {
     request.get(questionApi, function (error, response, body) {
       if (error && !response.statusCode == 200) {
