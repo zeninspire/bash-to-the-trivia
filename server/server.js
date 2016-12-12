@@ -47,6 +47,12 @@ io.on('connection', function(socket) {
     if (socket.roomname !== 'Profile') {
       socket.broadcast.to(socket.roomname).emit('UserLeft', socket.username);
     }
+    console.log('Rooms: ', roomsX);
+    console.log('socket.roomname: ', socket.roomname);
+    if(socket.roomname !== undefined) {
+      var index = roomsX[socket.roomname].indexOf(socket.username);
+      roomsX[socket.roomname].splice(index, 1);
+    }
     socket.leave(socket.roomname);
   });
 
@@ -386,16 +392,42 @@ app.get('/api/questions', function(req, res) {
     });
   })
   promise.then(function(body) {
-    var temp = JSON.parse(body).results;
+    var temp0 = JSON.parse(body).results;
+    function translate(src){
+      var questions = [];
+      for (var i = 0; i < src.length;i++) {
+        var result = {};
+        var q = src[i].question;
+        //two most commonly seen one, see if you can combine them into 1 line of code
+        var question = q.replace(/&quot;/gi, '\'').replace(/&#039;/gi,'\'');
+        //less comon
+        // var question= q2.replace(/&eacute;/gi,'e');
+        result['question'] = question;
+
+        var ca = src[i].correct_answer;
+        var correct_answer = ca.replace(/&quot;/gi, '\'').replace(/&#039;/gi,'\'');
+        result['correct_answer'] = correct_answer;
+
+        var ia = src[i].incorrect_answers;
+        var incorrect_answers = [];
+        for (j = 0; j<ia.length; j++) {
+          incorrect_answers.push(ia[j].replace(/&quot;/gi, '\'').replace(/&#039;/gi,'\''));
+        };
+        result['incorrect_answers'] = incorrect_answers;
+        questions[i] = result;
+        };
+      return questions;
+    }
+    var temp = translate(temp0);
     res.json(temp);
-      for(var i = 0; i < 10; i++) {
-        var qt = new Question({
-          question: temp[i].question,
-          correctAnswer: temp[i].correct_answer,
-          incorrectAnswer: temp[i].incorrect_answers,
-        });
-        qt.save();
-      }
+    for(var i = 0; i < 10; i++) {
+      var qt = new Question({
+        question: temp[i].question,
+        correctAnswer: temp[i].correct_answer,
+        incorrectAnswer: temp[i].incorrect_answers,
+      });
+      qt.save();
+    }
   }).catch(function(err) {
       res.status(404).json(err)
     })
