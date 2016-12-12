@@ -4,6 +4,8 @@ var path = require('path');
 var request = require('request');
 var morgan = require('morgan');
 // var jwt = require('jsonwebtoken');
+var multer = require('multer');
+var fs = require('fs');
 
 
 var mongoose = require('mongoose');
@@ -19,13 +21,54 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
-app.use(bodyParser.urlencoded({extended:true}));
+var uploading = multer({
+  dest: 'uploads',
+});
+
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, '../client')));
 app.use(morgan('dev'));
 
 
-var usersX =[];
+app.post('/api/profile/upload', uploading.single('avatar'), function(req, res, next) {
+  console.log('req.body', req.body);
+  console.log('req.file', req.file);
+  var username = req.body.username;
+  User.findOne({username: username}).exec(function(err, user) {
+    if (err) {
+      res.sendStatus(400);
+    } else {
+      console.log('req.file.filename', req.file.filename );
+      user.avatar = req.file.filename;
+      console.log('user', user);
+      user.save(function(err, user) {
+        if (err) {
+          return res.sendStatus(500).end();
+        }
+        console.log('save succesful', user.avatar);
+        res.send(user.avatar);
+      });
+    }
+  });
+});
+
+app.get('/api/uploads/:avatar', function(req, res) {
+  var avatar = req.params.avatar;
+  console.log('avatar', avatar);
+
+  console.log('path', path.join(__dirname, '../uploads/' + avatar ));
+  fs.readFile(path.join(__dirname, '../uploads/' + avatar ), function(err, content) {
+    if (err) {
+      res.sendStatus(500).end();
+    } else {
+      res.header('Content-Type', 'image/jpeg').end(content, 'utf-8');
+    }
+  });
+});
+
+
+var usersX = [];
 var roomsX = {
   'Profile': [],
   'Lobby': []
@@ -35,6 +78,7 @@ var roomsX = {
 // SEVDA VERSION //
 io.on('connection', function(socket) {
 
+
   socket.on('signUp', function(user) {
     socket.username = user.username;
     socket.roomname = 'Profile';
@@ -43,13 +87,13 @@ io.on('connection', function(socket) {
     console.log(socket.username + ' connected to ' + socket.roomname);
   });
 
-   socket.on('disconnect', function() {
+  socket.on('disconnect', function() {
     if (socket.roomname !== 'Profile') {
       socket.broadcast.to(socket.roomname).emit('UserLeft', socket.username);
     }
     console.log('Rooms: ', roomsX);
     console.log('socket.roomname: ', socket.roomname);
-    if(socket.roomname !== undefined) {
+    if (socket.roomname !== undefined) {
       var index = roomsX[socket.roomname].indexOf(socket.username);
       roomsX[socket.roomname].splice(index, 1);
     }
@@ -79,6 +123,9 @@ io.on('connection', function(socket) {
       roomsX[newRoom].push(socket.username);
     }
     socket.join(newRoom);
+    console.log('newroom: ', newRoom);
+    console.log('socket.roomname: ', socket.roomname);
+
     io.sockets.in(newRoom).emit('UserJoined', socket.username, roomsX[newRoom]);
   });
 
@@ -165,7 +212,7 @@ app.post('/api/users/addRoom', function(req, res) {
 	var admin = req.body.currentUser;
 	Room.findOne({roomname:roomname}).exec(function(err, room) {
 		if(err || room) {
-			res.status(400).send('bad request');
+			res.status(409).send('Room already exists');
 		} else {
 			var newRoom = Room({
 				roomname: roomname,
@@ -314,6 +361,7 @@ app.post('/api/signup', function(req, res) {
             username: user.username,
             score: 0
           };
+          var avatar = user.avatar;
 					room.users.push(newUser);
 					room.save(function(err) {
 						if(err) return res.send(err);
@@ -327,9 +375,11 @@ app.post('/api/signup', function(req, res) {
 							admin: room.admin
 						};
 						user.username = username;
+            user.avatar = avatar;
 						resp.user = user;
 						resp.rooms = rooms;
             // resp.token = token;
+            console.log('RESPPP', resp);
 						res.json(resp);
 					})
 				})
@@ -346,6 +396,7 @@ app.post('/api/signin', function(req, res) {
 			return res.send(new Error('login error'));
 		} else {
 			user.auth(password, user.password).then(function(match) {
+        var avatar = user.avatar;
 				if(match) {
 					Room.find({'users.username': username}, function(err, foundRooms) {
 						if(err) return res.sendStatus(500);
@@ -361,13 +412,14 @@ app.post('/api/signin', function(req, res) {
 							};
 						}
 						user.username = username;
+            user.avatar = avatar;
 						resp.user = user;
 						resp.rooms = rooms;
-						console.log(resp)
+						console.log(resp);
 						return res.json(resp);
-					})
+					});
 				} else {
-					console.log('NO MATCH')
+					console.log('NO MATCH');
 					res.status(401).end();
 				}
 			})
@@ -393,6 +445,8 @@ app.get('/api/questions', function(req, res) {
   })
   promise.then(function(body) {
     var temp0 = JSON.parse(body).results;
+
+    // this function deals with the special characters sent from the Trivia API
     function translate(src){
       var questions = [];
       for (var i = 0; i < src.length;i++) {

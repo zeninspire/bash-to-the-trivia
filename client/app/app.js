@@ -1,4 +1,4 @@
-angular.module('app', ['app.auth', 'app.user', 'ui.router'])
+angular.module('app', ['app.auth', 'app.user', 'app.profile', 'ngFileUpload', 'ui.router'])
 
 
 .config(function($stateProvider, $httpProvider) {
@@ -22,8 +22,8 @@ angular.module('app', ['app.auth', 'app.user', 'ui.router'])
   })
   .state('homeState.profile', {
     url: '/profile',
-    templateUrl: 'app/user/home.profile.html', //#1 view
-    controller: 'HomeController'
+    templateUrl: 'app/user/home.profile.html',
+    controller: 'ProfileController'
   })
   .state('homeState.room', {
     url: '/room/:roomname',
@@ -43,7 +43,7 @@ angular.module('app', ['app.auth', 'app.user', 'ui.router'])
 
   // $httpProvider.interceptors.push('AttachTokens');
 
-})
+});
 // .factory('AttachTokens', function($window) {
 
 //   var attach = {

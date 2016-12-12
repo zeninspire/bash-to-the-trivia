@@ -7,7 +7,6 @@ angular.module('app.services', [])
   return {
     user: {},
     rooms: {},
-    avatar: 'http://www.how-to-draw-funny-cartoons.com/images/draw-a-goose-001.jpg',
     currentRoom: {},
     activeUsers: [],
 
@@ -32,7 +31,11 @@ angular.module('app.services', [])
         $location.path('/home/room/' + newRoomName);
         socket.emit('addNewRoom', newRoomName);
       }, function errorCallback(err) {
-          throw err;
+          if (err.data === 'Room already exists') {
+            console.log('Room already exists');
+          } else {
+            throw err;
+          }
       });
     },
 
@@ -78,17 +81,6 @@ angular.module('app.services', [])
       return this.rooms[room.roomname] = room;
       //TODO: update rooms object to add the new roomname, admin and users
     },
-    // removeActiveUser: function(username) {
-    //   var index = this.activeUsers.indexOf(username);
-    //   this.activeUsers.splice(index, 1);
-    // },
-    // addActiveUser: function(username) {
-    //   if (username !== this.user) {
-    //     this.activeUsers.push(username);
-    //   } else {
-    //     //TODO: Emit server request to REDIS DB to get the database of all the active users in the currentroom
-    //   }
-    // },
     invitedToNewRoom: function(roomInfo) {
       this.rooms[roomInfo.roomname] = roomInfo;
     },
@@ -165,6 +157,7 @@ angular.module('app.services', [])
           $location.path('/signin');
         } else {
           context.user.username = resp.data.user.username;
+          context.user.avatar = resp.data.user.avatar;
           context.rooms = resp.data.rooms;
           socket.emit('signUp', {username: resp.data.user.username});
           // console.log('TOKEN: ', resp.data.token);
@@ -183,11 +176,12 @@ angular.module('app.services', [])
         url: 'api/signin',
         data: user
       }).then(function(resp) {
-        console.log("signIn response", resp.data);
+        console.log('signIn response', resp.data);
         if (!resp.data) {
           $location.path('/signup');
         } else {
           context.user.username = resp.data.user.username;
+          context.user.avatar = resp.data.user.avatar;
           context.rooms = resp.data.rooms;
           socket.emit('signIn', {username: resp.data.user.username});
           $location.path('/home/profile');

@@ -6,20 +6,12 @@ var Schema = mongoose.Schema;
 var userSchema = new Schema({
   username: { type: String, required: true, index: {unique: true }},
   password: { type: String, required: true},
-  rooms: {type: Array, default: ["Lobby"]},
-  avatarUrl: {type: String },
+  rooms: {type: Array, default: ['Lobby']},
+  avatar: {type: String, default: 'default.png' },
   age: { type: Number, min: 3, max: 65 },
   created_at: Date,
   updated_at: Date
-})
-
-// const resolveResultOrReject = (res, rej) => {
-//    (err, res) => (err ? rej(err) : res(res))
-// }
-
-// const resolveResultOrRejectPrint = (res, rej) => {
-//    (err, res) => (err ? console.log(err) || rej(err) : console.log(res) || res(res))
-// }
+});
 
 
 var User = mongoose.model('User', userSchema);
@@ -40,7 +32,7 @@ userSchema.pre('save', function(next) {
     user.password = hash;
     next();
   })
-})    
+})
 
 User.prototype.auth = function (plain, hash) {
   return new Promise(function(resolve, reject) {

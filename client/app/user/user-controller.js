@@ -78,7 +78,6 @@ angular.module('app.user', ['app.services'])
       $scope.activeUsers.push(username);
       console.log(username, ' has joined the room');
     }
-    // $scope.addActiveUser(username);
   });
 
   $scope.on('InvitetoNewRoom', function(roomInfo) {
