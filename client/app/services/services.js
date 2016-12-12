@@ -101,6 +101,7 @@ angular.module('app.services', [])
           roomname: context.currentRoom.roomname
         }
       }).then(function successCallback(resp) {
+        context.user.score += score;
         socket.emit('updateScores', context.currentRoom.roomname);
       }, function errorCallback(err) {
         throw err;
@@ -159,6 +160,7 @@ angular.module('app.services', [])
           context.user.username = resp.data.user.username;
           context.user.avatar = resp.data.user.avatar;
           context.rooms = resp.data.rooms;
+          context.user.score = resp.data.user.score;
           socket.emit('signUp', {username: resp.data.user.username});
           // console.log('TOKEN: ', resp.data.token);
           // return resp.data.token;
@@ -182,6 +184,7 @@ angular.module('app.services', [])
         } else {
           context.user.username = resp.data.user.username;
           context.user.avatar = resp.data.user.avatar;
+          context.user.score = resp.data.user.score;
           context.rooms = resp.data.rooms;
           socket.emit('signIn', {username: resp.data.user.username});
           $location.path('/home/profile');

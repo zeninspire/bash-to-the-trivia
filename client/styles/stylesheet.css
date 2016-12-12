@@ -12,7 +12,7 @@
 */ }
 
 button {
-	margin-top: 10px; 
+	margin-top: 10px;
 }
 /* Toggle Styles */
 
@@ -178,6 +178,13 @@ strong {
     padding-left: 20px;
 }
 
+.correct-answer {
+    color: green;
+}
+
+.incorrect-answer {
+    color: red;
+}
 
 
 

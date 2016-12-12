@@ -8,6 +8,7 @@ var userSchema = new Schema({
   password: { type: String, required: true},
   rooms: {type: Array, default: ['Lobby']},
   avatar: {type: String, default: 'default.png' },
+  score: {type: Number, default: 0},
   age: { type: Number, min: 3, max: 65 },
   created_at: Date,
   updated_at: Date
