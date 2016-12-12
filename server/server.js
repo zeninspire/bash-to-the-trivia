@@ -545,7 +545,7 @@ function parser (string) {
 
 
 
-http.listen(8080, function() {
+http.listen(PORT, function() {
   console.log('Listening to port ', PORT);
 });
 
