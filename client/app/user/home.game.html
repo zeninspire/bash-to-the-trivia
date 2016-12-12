@@ -1,5 +1,6 @@
 <div id="page-game-wrapper">
 	<h2>Trivia time!</h2><hr>
+  <h1 ng-if="gameState.gameFinished === false"><span class="glyphicon glyphicon-hourglass"></span>{{gameState.timer}}</h1>
 
 <!-- GAME HANDLING -->
   <div ng-if="gameState.gameFinished === false" class="col-md-12">
@@ -15,10 +16,10 @@
     </form><br>
   </div>
 
-    <div ng-if="gameState.isCorrect === 'yes' && gameState.gameFinished === false" class="feedback correct">
+    <div class="correct-answer" ng-if="gameState.isCorrect === 'yes' && gameState.gameFinished === false" class="feedback correct">
       You are CORRECT!
     </div>
-    <div ng-if="gameState.isCorrect === 'no' && gameState.gameFinished === false" class="feedback incorrect">
+    <div class="incorrect-answer" ng-if="gameState.isCorrect === 'no' && gameState.gameFinished === false" class="feedback incorrect">
       You are INCORRECT! The correct answer is {{questionSet[gameState.questionsAttempted - 1].correct_answer}}.
     </div>
     <div ng-if="gameState.isCorrect === 'pending' && gameState.gameFinished === false" class="feedback pending">

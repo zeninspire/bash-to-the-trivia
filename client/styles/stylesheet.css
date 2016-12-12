@@ -178,6 +178,13 @@ strong {
     padding-left: 20px;
 }
 
+.correct-answer {
+    color: green;
+}
+
+.incorrect-answer {
+    color: red;
+}
 
 
 

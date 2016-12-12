@@ -1,6 +1,6 @@
 angular.module('app.user', ['app.services'])
 
-.controller('HomeController', function($scope, $location, UserInfo, $rootScope, $timeout) {
+.controller('HomeController', function($scope, $location, UserInfo, $rootScope, $timeout, $interval) {
 
   //Passing data from the UserInfo factory
   $scope.user = UserInfo.user;
@@ -96,6 +96,13 @@ angular.module('app.user', ['app.services'])
     var roundDuration = 5000;
     $scope.gameState = _resetGameState();
     var mathRandom = Math.random() * 1000;
+    var timer = $interval(function() {
+      if ($scope.gameState.timer === 1) {
+        $scope.gameState.timer = 5;
+      } else {
+        $scope.gameState.timer -= 1;
+      }
+    }, 1000);
 
 //have to be nested, in order to get the questionSet first
     // UserInfo.playGame(handleRoundEnd, handleGameEnd);
@@ -110,6 +117,7 @@ angular.module('app.user', ['app.services'])
 //function is called at the end of every game
     function handleGameEnd() {
       $scope.gameState.isCorrect = 'pending';
+      $interval.cancel(timer);
       $timeout(function() {
         UserInfo.sendScore($scope.gameState.numCorrect * 100);
         console.log('mathRandom: ', mathRandom);
@@ -124,6 +132,7 @@ angular.module('app.user', ['app.services'])
         numCorrect: 0,
         questionsAttempted: 1,
         gameFinished: false,
+        timer: 5
       };
     }
 
