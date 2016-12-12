@@ -6,10 +6,15 @@
  * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap/blob/gh-pages/LICENSE)
  */
 
- body {
+body {
     overflow-x: hidden;
 /*    padding-left: 30px;
-*/ }
+*/ 
+    background-image: url("landing-bg.jpg");
+
+}
+
+
 
 button {
 	margin-top: 10px;
@@ -30,7 +35,7 @@ button {
 
 #sidebar-wrapper {
     z-index: 1000;
-    position: fixed;
+    position: absolute;
     left: 250px;
     width: 0;
     height: 100%;
@@ -178,6 +183,7 @@ strong {
     padding-left: 20px;
 }
 
+
 .correct-answer {
     color: green;
 }
@@ -186,10 +192,25 @@ strong {
     color: red;
 }
 
+h1.ld {
+    font-family: 'Lobster', cursive;
+    font-size: 80px;
+    color: white;
+}
 
+h3.ld {
+    font-family: 'Lobster', cursive;
+    color: white;
+}
 
+a.user-name {
+    color: black;
+}
 
+a.user-name:hover {
+    color: blue;
+}
 
-
-
-
+div#wrapper.ng-scope {
+    background-image: ;
+}

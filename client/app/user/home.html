@@ -1,7 +1,10 @@
 
+
 <div id="wrapper">
+  <h1 class="ld"> Bash To The Trivia </h1>
+
 	<div id="sidebar-wrapper">
-		<h3 class="username" ui-sref=".profile">{{user.username}}</h3>
+		<h3 class="username" ui-sref=".profile"><a class="user-name">{{user.username}}</a></h3>
 		<ul>
 			<h4>Rooms</h4>
 			  <li ng-repeat="roomnameObj in rooms" ng-click="goToRoom(roomnameObj)">
