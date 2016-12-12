@@ -20,13 +20,13 @@ angular.module('app.user', ['app.services'])
 
   $scope.clear = function() {
     $scope.newRoomName = '';
+    $scope.newPlayer = {};
   }
 
   $scope.addPlayer = function(newPlayerUsername) {
-    console.log("newPlayerUsername", newPlayerUsername)
     var roomname = $scope.currentRoom.roomname;
-    console.log("roomname", roomname)
     UserInfo.addNewPlayer(roomname, newPlayerUsername);
+    $scope.clear();
   };
 
   $scope.startGame = function() {
@@ -42,14 +42,11 @@ angular.module('app.user', ['app.services'])
 
 //SOCKET.IO EVENT LISTENNERS//
   $scope.on('PlayerAdded', function(room, newPlayerUsername) {
-    console.log('before', newPlayerUsername);
     //Making sure we are on the right user/socket before we update the view
     if ($scope.currentRoom.roomname === room.roomname) {
       $scope.currentRoom = UserInfo.currentRoom;
-      console.log('AFTER',$scope.currentRoom)
     }
     if (newPlayerUsername === UserInfo.user.username) {
-    console.log("TEST", newPlayerUsername, UserInfo.user.username)
       $scope.rooms[room.roomname] = UserInfo.addedToNewRoom(room);
     }
 
@@ -100,6 +97,7 @@ angular.module('app.user', ['app.services'])
     var roundDuration = 5000;
     $scope.gameState = _resetGameState();
     var mathRandom = Math.random() * 1000;
+
 //have to be nested, in order to get the questionSet first
     // UserInfo.playGame(handleRoundEnd, handleGameEnd);
 
@@ -126,7 +124,7 @@ angular.module('app.user', ['app.services'])
         isCorrect: 'pending',
         numCorrect: 0,
         questionsAttempted: 1,
-        gameFinished: false
+        gameFinished: false,
       };
     }
 
@@ -134,7 +132,7 @@ angular.module('app.user', ['app.services'])
       $timeout(function() {
         handleRoundEnd(gameStart);
 
-        if ($scope.gameState.questionsAttempted === 10) {
+        if ($scope.gameState.questionsAttempted === 11) {
           $scope.gameState.gameFinished = true;
         }
 
@@ -142,7 +140,7 @@ angular.module('app.user', ['app.services'])
     }
 
     function gameStart() {
-      if ($scope.gameState.questionsAttempted < 10) {
+      if ($scope.gameState.questionsAttempted < 11) {
         _startTimer(roundDuration);
       } else {
         handleGameEnd();

@@ -1,22 +1,9 @@
 <div id="page-game-wrapper">
-	<h2>Game</h2><hr>
-
-	<h4>Players in game</h4>
-  <ul>
-  	<li>[Some names here]</li>
-    <li ng-repeat="name in users.username">{{name}}</li>
-  </ul><br>
-<!-- 	<span id="timer"><strong>Timer... [tick tock tick tock]</strong></span><br><br>
-  <h5><strong>Q: </strong>[Display the question here]</h5>
-  <form>
-  	<label><strong>Answer: </strong></label>
-    <input type="text" placeholder="Write the answer in this field"></input><br>
-    <button class="btn btn-primary" type="submit">Submit answer</button>
-  </form> -->
+	<h2>Trivia time!</h2><hr>
 
 <!-- GAME HANDLING -->
   <div ng-if="gameState.gameFinished === false" class="col-md-12">
-    <h5 class="col-md-6"><strong>Question {{gameState.questionsAttempted}} of 10: {{questionSet[gameState.questionsAttempted-1].question}}</strong></h5>
+    <h5 class="col-md-6"><strong>Question {{gameState.questionsAttempted}} of 10: {{questionSet[gameState.questionsAttempted - 1].question}}</strong></h5>
   </div>
   <div class="col-md-12" ng-if="gameState.gameFinished === false">
     <label><strong>Answers: </strong></label>
@@ -32,7 +19,7 @@
       You are CORRECT!
     </div>
     <div ng-if="gameState.isCorrect === 'no' && gameState.gameFinished === false" class="feedback incorrect">
-      You are INCORRECT! The correct answer is {{questionSet[0].correct_answer}}.
+      You are INCORRECT! The correct answer is {{questionSet[gameState.questionsAttempted - 1].correct_answer}}.
     </div>
     <div ng-if="gameState.isCorrect === 'pending' && gameState.gameFinished === false" class="feedback pending">
       Pick an answer SLOWPOKE!
@@ -40,7 +27,7 @@
     <button ng-if="gameState.gameFinished === false" class="btn btn-primary" type="submit" ng-click="submitAnswer()" ng-disabled="gameState.isCorrect !== 'pending'">Submit answer</button>
     </br></br>
     <div ng-if="gameState.gameFinished" class="endgame-message">
-      You got {{gameState.numCorrect}}/{{gameState.questionsAttempted}} correct <br><br>
+      You got {{gameState.numCorrect}}/{{gameState.questionsAttempted - 1}} correct <br><br>
       <button ui-sref="^.room({roomname: currentRoom.roomname})" class="btn btn-primary">Back to {{currentRoom.roomname}}</button>
     </div>
 
