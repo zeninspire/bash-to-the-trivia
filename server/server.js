@@ -286,30 +286,42 @@ app.post('/api/updateScores', function(req, res) {
   var username = req.body.username;
   var score = req.body.score;
   var roomname = req.body.roomname;
-  console.log('req.body', req.body)
-  Room.findOne({roomname: roomname}).where('users.username', username).exec(function(err, room) {
+  User.findOne({username: username}).exec(function(err, user) {
     if (err) {
-      return res.status(400).send('Room not found');
+      return res.status(400).send('User doesn\'t exist');
     } else {
-      //It it necessary to update the entire array and not just the user data, mongoose doesn't save when updating by index
-      var usersArray = [];
-      for (var i = 0; i < room.users.length; i++) {
-        if (room.users[i].username === username) {
-          var newUser = {
-            username: username,
-            score: room.users[i].score + score
-          };
-          usersArray.push(newUser);
-        } else {
-          usersArray.push(room.users[i]);
-        }
-      }
-      room.users = usersArray;
-      room.save(function(err) {
+      user.score += score;
+      user.save(function(err) {
         if (err) {
-          return res.status(400).send('Cannot update score in DB');
+          res.status(400).send('Cannot save user score in db');
         } else {
-          return res.send('Score saved in DB');
+          Room.findOne({roomname: roomname}).where('users.username', username).exec(function(err, room) {
+            if (err) {
+              return res.status(400).send('Room not found');
+            } else {
+              //It it necessary to update the entire array and not just the user data, mongoose doesn't save when updating by index - other option may be to create a Schema for each user in the users array - ref backlog
+              var usersArray = [];
+              for (var i = 0; i < room.users.length; i++) {
+                if (room.users[i].username === username) {
+                  var newUser = {
+                    username: username,
+                    score: room.users[i].score + score
+                  };
+                  usersArray.push(newUser);
+                } else {
+                  usersArray.push(room.users[i]);
+                }
+              }
+              room.users = usersArray;
+              room.save(function(err) {
+                if (err) {
+                  return res.status(400).send('Cannot update score in DB');
+                } else {
+                  return res.send('Score saved in DB');
+                }
+              });
+            }
+          });
         }
       });
     }
@@ -343,7 +355,8 @@ app.post('/api/signup', function(req, res) {
 			var promise = new Promise(function(resolve, reject) {
 				var newUser = new User({
 					username: username,
-					password: password
+					password: password,
+          score: 0
 				})
 				newUser.save(function(err, user) {
 					console.log("ON SAVE", err, user)
@@ -362,6 +375,7 @@ app.post('/api/signup', function(req, res) {
             score: 0
           };
           var avatar = user.avatar;
+          var score = user.score;
 					room.users.push(newUser);
 					room.save(function(err) {
 						if(err) return res.send(err);
@@ -374,8 +388,10 @@ app.post('/api/signup', function(req, res) {
 							users: room.users,
 							admin: room.admin
 						};
+            console.log('userrrr: ', user);
 						user.username = username;
             user.avatar = avatar;
+            user.score = score;
 						resp.user = user;
 						resp.rooms = rooms;
             // resp.token = token;
@@ -397,6 +413,7 @@ app.post('/api/signin', function(req, res) {
 		} else {
 			user.auth(password, user.password).then(function(match) {
         var avatar = user.avatar;
+        var score = user.score;
 				if(match) {
 					Room.find({'users.username': username}, function(err, foundRooms) {
 						if(err) return res.sendStatus(500);
@@ -413,6 +430,7 @@ app.post('/api/signin', function(req, res) {
 						}
 						user.username = username;
             user.avatar = avatar;
+            user.score = score;
 						resp.user = user;
 						resp.rooms = rooms;
 						console.log(resp);

@@ -1,6 +1,8 @@
 # bash-to-the-trivia
 
-project description
+Bash to the trivia is an interactive multiplayer Trivia game. Users can access the lobby room upon Sign-up. They are able to create new rooms, add friends to these private rooms and compete playing Trivia. Each user will have a score and ranking in each room he/she belongs to.
+
+This projects uses the MEAN stack and integrates Socket.io technology to facilitate the Multiplayer mode.
 
 ## Team
 
@@ -20,7 +22,7 @@ project description
 
 ## Usage
 
-> Some usage instructions
+Once the repo has been cloned and dependencies installed, run 'mongod' & 'npm start' from the command line.
 
 ## Requirements
 
@@ -55,14 +57,18 @@ project description
 From within the root directory:
 
 ```sh
-sudo npm install -g bower
 npm install
+```
+
+From within the client directory:
+```sh
+npm install bower
 bower install
 ```
 
 ### Roadmap
 
-View the project roadmap [here](LINK_TO_PROJECT_ISSUES)
+View the project roadmap [https://docs.google.com/spreadsheets/d/1tKUEOUHdCOdMaLSfoxW_ClhZ-fggJmUR1kDm8qBcxqY/edit?usp=sharing]
 
 
 ## Contributing
