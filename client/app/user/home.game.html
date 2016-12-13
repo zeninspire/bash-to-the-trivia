@@ -16,13 +16,13 @@
     </form><br>
   </div>
 
-    <div class="correct-answer" ng-if="gameState.isCorrect === 'yes' && gameState.gameFinished === false" class="feedback correct">
-      You are CORRECT!
+    <div  ng-if="gameState.isCorrect === 'yes' && gameState.gameFinished === false" class="feedback-correct">
+      <div class="correct">You are CORRECT!</div>
     </div>
-    <div class="incorrect-answer" ng-if="gameState.isCorrect === 'no' && gameState.gameFinished === false" class="feedback incorrect">
-      You are INCORRECT! The correct answer is {{questionSet[gameState.questionsAttempted - 1].correct_answer}}.
+    <div  ng-if="gameState.isCorrect === 'no' && gameState.gameFinished === false" class="feedback-incorrect">
+      <div class="incorrect"> You are INCORRECT! The correct answer is {{questionSet[gameState.questionsAttempted - 1].correct_answer}}. </div>
     </div>
-    <div ng-if="gameState.isCorrect === 'pending' && gameState.gameFinished === false" class="feedback pending">
+    <div ng-if="gameState.isCorrect === 'pending' && gameState.gameFinished === false" class="feedback-pending">
       Pick an answer SLOWPOKE!
     </div>
     <button ng-if="gameState.gameFinished === false" class="btn btn-primary" type="submit" ng-click="submitAnswer()" ng-disabled="gameState.isCorrect !== 'pending'">Submit answer</button>
