@@ -4,20 +4,20 @@
   <h1 class="ld"> Bash To The Trivia </h1>
 
 	<div id="sidebar-wrapper">
-		<h3 class="username" ui-sref=".profile"><a class="user-name">{{user.username}}</a></h3>
+		<h3 class="username" ui-sref=".profile"><a class="user-name">{{user.username}}</a></h3><hr />
 		<ul>
-			<h4>Rooms</h4>
+			<h4 class="sb">Rooms</h4>
 			  <li ng-repeat="roomnameObj in rooms" ng-click="goToRoom(roomnameObj)">
 			  	<a ui-sref=".room({roomname: roomnameObj.roomname})">{{roomnameObj.roomname}}</a>
 			  </li>
 			<br>
 
 			<form name="newRoom" ng-submit="addRoom(newRoomName)">
-		    <input type="text" name="newthing" ng-model="newRoomName" /><br>
-		    <input type="submit" value="Add Room" /><br>
+		    <input class="new-room" type="text" name="newthing" ng-model="newRoomName" /><br>
+		    <input class="add-room" type="submit" value="Add Room" /><br>
 		  </form><br><br>
 
-		  <h4>My Friends</h4>
+		  <h4 class="sb">My Friends</h4>
 		  <li ng-repeat="users in activeUsers">{{users}}</li>
 
 		</ul>

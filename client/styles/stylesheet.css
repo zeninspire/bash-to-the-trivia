@@ -8,12 +8,8 @@
 
 body {
     overflow-x: hidden;
-/*    padding-left: 30px;
-*/ 
     background-image: url("landing-bg.jpg");
-
 }
-
 
 
 button {
@@ -41,7 +37,8 @@ button {
     height: 100%;
     margin-left: -250px;
     overflow-y: auto;
-    background: #faebd7;
+    background: black;
+    color: white;
     -webkit-transition: all 0.5s ease;
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
@@ -56,18 +53,25 @@ button {
     width: 100%;
     position: absolute;
     padding: 30px;
+    background-color: rgba(211,211,211,0.8);
+
 }
 
 #page-room-wrapper {
     width: 100%;
     position: absolute;
     padding: 30px;
+    background-color: rgba(211,211,211,0.8);
+    padding-top: 0;
 }
 
 #page-game-wrapper {
     width: 100%;
     position: absolute;
     padding: 30px;
+    background-color: rgba(211,211,211,0.4);
+    padding-top: 5;
+
 }
 
 #wrapper.toggled #page-content-wrapper {
@@ -184,12 +188,14 @@ strong {
 }
 
 
-.correct-answer {
+.correct {
     color: green;
+    font-weight: bolder;
 }
 
-.incorrect-answer {
+.incorrect{
     color: red;
+    font-weight: bolder;
 }
 
 h1.ld {
@@ -203,14 +209,34 @@ h3.ld {
     color: white;
 }
 
-a.user-name {
-    color: black;
+a.user-name.ng-binding {
+    color: white;
+    font-weight: bold;
+    font-size: 40px;
 }
 
 a.user-name:hover {
     color: blue;
 }
 
-div#wrapper.ng-scope {
-    background-image: ;
+.jumbotron {
+    background-color: rgba(211,211,211,0.5);
+}
+
+h4.sb {
+    font-size: 22px;
+}
+
+a.ng-binding {
+    font-size: 17px;
+    font-weight: bold;
+}
+
+input.add-room, input.new-room {
+    color: black;
+}
+
+h3.ng-binding {
+    font-weight: bold;
+    font-size: 40px;
 }
